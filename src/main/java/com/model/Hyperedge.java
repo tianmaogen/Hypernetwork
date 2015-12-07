@@ -8,8 +8,8 @@ public class Hyperedge {
 	private List<UserBean> content;
 	private Integer val;
 	
-	private int rCount=0; //¶ÔÓÚÆ¥ÅäÇÒ·ÖÀàÕıÈ·µÄÊÊÓ¦Öµ
-	private int wCount=0; //¶ÔÓÚÆ¥ÅäÇÒ·ÖÀà´íÎóµÄÊÊÓ¦Öµ
+	private int rCount=0; //å¯¹äºåŒ¹é…ä¸”åˆ†ç±»æ­£ç¡®çš„é€‚åº”å€¼Öµ
+	private int wCount=0; //å¯¹äºåŒ¹é…ä¸”åˆ†ç±»é”™è¯¯çš„é€‚åº”å€¼Öµ
 	
 	public String getItemId() {
 		return itemId;

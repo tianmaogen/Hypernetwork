@@ -16,8 +16,8 @@ import com.model.UserBean;
 public class MyFileUtils {
 	
 	/**
-	 * 获取 map<itemId,该item对于的userList>
-	 * @param filePath 文件路径
+	 * 锟斤拷取 map<itemId,锟斤拷item锟斤拷锟节碉拷userList>
+	 * @param filePath 锟侥硷拷路锟斤拷
 	 * @return
 	 */
 	public static Map<String, List<UserBean>> getUserMap(String filePath) {
@@ -26,13 +26,13 @@ public class MyFileUtils {
 		
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
-		BufferedReader br = null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
+		BufferedReader br = null; // 锟斤拷锟节帮拷装InputStreamReader,锟斤拷叽锟斤拷锟斤拷锟斤拷堋锟斤拷锟轿狟ufferedReader锟叫伙拷锟斤拷模锟斤拷锟絀nputStreamReader没锟叫★拷
 		try {
 			String str = "";
 			fis = new FileInputStream(filePath);// FileInputStream
-			// 从文件系统中的某个文件中获取字节
-			isr = new InputStreamReader(fis);// InputStreamReader 是字节流通向字符流的桥梁,
-			br = new BufferedReader(isr);// 从字符输入流中读取文件中的内容,封装了一个new
+			// 锟斤拷锟侥硷拷系统锟叫碉拷某锟斤拷锟侥硷拷锟叫伙拷取锟街斤拷
+			isr = new InputStreamReader(fis);// InputStreamReader 锟斤拷锟街斤拷锟斤拷通锟斤拷锟街凤拷锟斤拷锟斤拷锟斤拷锟斤拷,
+			br = new BufferedReader(isr);// 锟斤拷锟街凤拷锟斤拷锟斤拷锟斤拷锟叫讹拷取锟侥硷拷锟叫碉拷锟斤拷锟斤拷,锟斤拷装锟斤拷一锟斤拷new
 			while ((str = br.readLine()) != null) {
 				String[] strs = str.split("	");
 //				System.out.println("userId===" + strs[0] + "itemId========" + strs[1] + "score=======" + strs[2]);
@@ -51,15 +51,15 @@ public class MyFileUtils {
 			}
 //			System.out.println("newMapSize==============="+newMap.keySet().size());
 		} catch (FileNotFoundException e) {
-			System.out.println("找不到指定文件");
+			System.out.println("锟揭诧拷锟斤拷指锟斤拷锟侥硷拷");
 		} catch (IOException e) {
-			System.out.println("读取文件失败");
+			System.out.println("锟斤拷取锟侥硷拷失锟斤拷");
 		} finally {
 			try {
 				br.close();
 				isr.close();
 				fis.close();
-				// 关闭的时候最好按照先后顺序关闭最后开的先关闭所以先关s,再关n,最后关m
+				// 锟截闭碉拷时锟斤拷锟斤拷冒锟斤拷锟斤拷群锟剿筹拷锟截憋拷锟斤拷罂锟斤拷裙乇锟斤拷锟斤拷锟斤拷裙锟絪,锟劫癸拷n,锟斤拷锟斤拷m
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -68,25 +68,25 @@ public class MyFileUtils {
 		return map;
 	}
 	
-	public static void printToFile(String str) {
+	public synchronized static void printToFile(String str) {
 		System.out.println(str);
 	}
 	/**
-	 * 获取 map<userId,该用户对于的itemList>
-	 * @param filePath 文件路径
+	 * 锟斤拷取 map<userId,锟斤拷锟矫伙拷锟斤拷锟节碉拷itemList>
+	 * @param filePath 锟侥硷拷路锟斤拷
 	 * @return
 	 */
 	public static Map<String, List<ItemBean>> getItemMap(String filePath) {
 		Map<String, List<ItemBean>> map = new HashMap<>();
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
-		BufferedReader br = null; // 用于包装InputStreamReader,提高处理性能。因为BufferedReader有缓冲的，而InputStreamReader没有。
+		BufferedReader br = null; // 锟斤拷锟节帮拷装InputStreamReader,锟斤拷叽锟斤拷锟斤拷锟斤拷堋锟斤拷锟轿狟ufferedReader锟叫伙拷锟斤拷模锟斤拷锟絀nputStreamReader没锟叫★拷
 		try {
 			String str = "";
 			fis = new FileInputStream(filePath);// FileInputStream
-			// 从文件系统中的某个文件中获取字节
-			isr = new InputStreamReader(fis);// InputStreamReader 是字节流通向字符流的桥梁,
-			br = new BufferedReader(isr);// 从字符输入流中读取文件中的内容,封装了一个new
+			// 锟斤拷锟侥硷拷系统锟叫碉拷某锟斤拷锟侥硷拷锟叫伙拷取锟街斤拷
+			isr = new InputStreamReader(fis);// InputStreamReader 锟斤拷锟街斤拷锟斤拷通锟斤拷锟街凤拷锟斤拷锟斤拷锟斤拷锟斤拷,
+			br = new BufferedReader(isr);// 锟斤拷锟街凤拷锟斤拷锟斤拷锟斤拷锟叫讹拷取锟侥硷拷锟叫碉拷锟斤拷锟斤拷,锟斤拷装锟斤拷一锟斤拷new
 			while ((str = br.readLine()) != null) {
 				String[] strs = str.split("	");
 				String userId = strs[0];
@@ -104,15 +104,15 @@ public class MyFileUtils {
 			}
 
 		} catch (FileNotFoundException e) {
-			System.out.println("找不到指定文件");
+			System.out.println("锟揭诧拷锟斤拷指锟斤拷锟侥硷拷");
 		} catch (IOException e) {
-			System.out.println("读取文件失败");
+			System.out.println("锟斤拷取锟侥硷拷失锟斤拷");
 		} finally {
 			try {
 				br.close();
 				isr.close();
 				fis.close();
-				// 关闭的时候最好按照先后顺序关闭最后开的先关闭所以先关s,再关n,最后关m
+				// 锟截闭碉拷时锟斤拷锟斤拷冒锟斤拷锟斤拷群锟剿筹拷锟截憋拷锟斤拷罂锟斤拷裙乇锟斤拷锟斤拷锟斤拷裙锟絪,锟劫癸拷n,锟斤拷锟斤拷m
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

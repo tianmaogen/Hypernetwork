@@ -13,16 +13,16 @@ import com.model.UserBean;
 import com.model.UserBeanListAndVal;
 
 public class Hypernetworks {
-	private int maxIterationCount=30;
+	private int maxIterationCount=150;
 	private Map<String, UserBeanListAndVal> trainMap;
 	private Map<String, UserBeanListAndVal> testMap;
 //	private String userId;
-	//³¬±êµÄ½éÊı
-	private int order=4;
+	//è¶…è¾¹çš„ä»‹æ•°
+	private int order=5;
 	private int hyperedgeCount=100;
 	private Random random = new Random();
 //	private double weight = 0.5;
-	//³¬±ß¿âL
+	//è¶…è¾¹é›†åˆ
 	private List<Hyperedge> hyperedgeList;
 	
 	public Hypernetworks(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap) {
@@ -37,8 +37,8 @@ public class Hypernetworks {
 		
 		int iterationCount = maxIterationCount;
 		while(rightRate < 0.9 && iterationCount > 0) {
-			//Ìæ»»³¬±ß
-			replaceHyperedge(hyperedgeList,rightRate);
+			//æ›¿æ¢è¶…è¾¹
+			replaceHyperedge(hyperedgeList);
 			rightRate = getRightRate(trainMap);
 			
 			iterationCount--;
@@ -51,13 +51,12 @@ public class Hypernetworks {
 		return getRightRate(testMap);
 	}
  
-	private void replaceHyperedge(List<Hyperedge> hyperedgeList, double rightRate) {
+	private void replaceHyperedge(List<Hyperedge> hyperedgeList) {
 		
 		for(int i=0; i<hyperedgeList.size(); i++) {
 			Hyperedge hyperedge = hyperedgeList.get(i);
-			//Ìæ»»µôÕıÈ·¸öÊıÓë´íÎó¸öÊıÏàµÈ»òÕßÕıÈ·¸öÊıĞ¡ÓÚ´íÎó¸öÊıµÄ³¬±ß
 			if(hyperedge.getrCount() - hyperedge.getwCount() <= 1) {
-				//Ëæ»úÑ¡ÔñÒ»ÌõÑµÁ·Ñù±¾
+				//éšæœºå–ä¸€ä¸ªitem
 				String itemId = getRandomItemId();
 				UserBeanListAndVal userBeanListAndVal = trainMap.get(itemId);
 				hyperedge.setItemId(itemId);
@@ -75,12 +74,12 @@ public class Hypernetworks {
 		}
 		
 		
-//		//ÅÅĞò£¬ÕıÈ·ÂÊ¸ßµÄÅÅÔÚ×îºóµÄÎ»ÖÃ
+//		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½Ê¸ßµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 //		bubbling(hyperedgeList);
-//		//Ìæ»»Ç° hyperedgeCount * 10Ìõ
+//		//ï¿½æ»»Ç° hyperedgeCount * 10ï¿½ï¿½
 //		int replaceHyperedgeCount = (int) ((1.0 - rightRate) * hyperedgeList.size() * weight);
 //		for(int i = 0;i < replaceHyperedgeCount;i++) {
-//			//Ëæ»úÑ¡ÔñÒ»ÌõÑµÁ·Ñù±¾
+//			//ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½Ò»ï¿½ï¿½Ñµï¿½ï¿½ï¿½ï¿½
 //			String itemId = getRandomItemId();
 //			UserBeanListAndVal userBeanListAndVal = trainMap.get(itemId);
 //			Hyperedge hyperedge = new Hyperedge();
@@ -131,64 +130,64 @@ public class Hypernetworks {
 	}
 	
 	
-	//¿ìËÙÅÅĞò
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	private void quickSort(List<Hyperedge> list, int low, int high) {
 		if (low < high) { 
-			int middle = getMiddle(list, low, high);  //½«listÊı×é½øĞĞÒ»·ÖÎª¶ş
-			quickSort(list, low, middle - 1);        //¶ÔµÍ×Ö±í½øĞĞµİ¹éÅÅĞò
-			quickSort(list, middle + 1, high);       //¶Ô¸ß×Ö±í½øĞĞµİ¹éÅÅĞò
+			int middle = getMiddle(list, low, high);  //ï¿½ï¿½listï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Îªï¿½ï¿½
+			quickSort(list, low, middle - 1);        //ï¿½Ôµï¿½ï¿½Ö±ï¿½ï¿½ï¿½Ğµİ¹ï¿½ï¿½ï¿½ï¿½ï¿½
+			quickSort(list, middle + 1, high);       //ï¿½Ô¸ï¿½ï¿½Ö±ï¿½ï¿½ï¿½Ğµİ¹ï¿½ï¿½ï¿½ï¿½ï¿½
 		}
 	}
 	
-//	int tmp = list[low];    //Êı×éµÄµÚÒ»¸ö×÷ÎªÖĞÖá
+//	int tmp = list[low];    //ï¿½ï¿½ï¿½ï¿½Äµï¿½Ò»ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
 //	while (low < high) {
 //		while (low < high && list[high] > tmp) {
 //			high--;
 //		}
-//		list[low] = list[high];   //±ÈÖĞÖáĞ¡µÄ¼ÇÂ¼ÒÆµ½µÍ¶Ë
+//		list[low] = list[high];   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½Ä¼ï¿½Â¼ï¿½Æµï¿½ï¿½Í¶ï¿½
 //		while (low < high && list[low] < tmp) {
 //			low++;
 //		}
-//		list[high] = list[low];   //±ÈÖĞÖá´óµÄ¼ÇÂ¼ÒÆµ½¸ß¶Ë
+//		list[high] = list[low];   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Â¼ï¿½Æµï¿½ï¿½ß¶ï¿½
 //	}
-//	list[low] = tmp;              //ÖĞÖá¼ÇÂ¼µ½Î²
-//	return low;                   //·µ»ØÖĞÖáµÄÎ»ÖÃ
+//	list[low] = tmp;              //ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Î²
+//	return low;                   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 	private int getMiddle(List<Hyperedge> list, int low, int high) {
-		Hyperedge tmp = list.get(low);    //Êı×éµÄµÚÒ»¸ö×÷ÎªÖĞÖá
+		Hyperedge tmp = list.get(low);    //ï¿½ï¿½ï¿½ï¿½Äµï¿½Ò»ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½
 		while (low < high) {
 			while (low < high && list.get(high).moreRight(tmp)) {
 				high--;
 			}
 			Hyperedge highBean = list.get(high);
 			Hyperedge lowBean = list.get(low);
-			lowBean = highBean;   //±ÈÖĞÖáĞ¡µÄ¼ÇÂ¼ÒÆµ½µÍ¶Ë
+			lowBean = highBean;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½Ä¼ï¿½Â¼ï¿½Æµï¿½ï¿½Í¶ï¿½
 			while (low < high && tmp.moreRight(list.get(low))) {
 				low++;
 			}
 			Hyperedge highBean1 = list.get(high);
 			Hyperedge lowBean1 = list.get(low);
-			highBean = lowBean;   //±ÈÖĞÖá´óµÄ¼ÇÂ¼ÒÆµ½¸ß¶Ë
+			highBean = lowBean;   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½Â¼ï¿½Æµï¿½ï¿½ß¶ï¿½
 		}
 		Hyperedge lowBean2 = list.get(low);
-		lowBean2 = tmp;              //ÖĞÖá¼ÇÂ¼µ½Î²
-		return low;                   //·µ»ØÖĞÖáµÄÎ»ÖÃ
+		lowBean2 = tmp;              //ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½Î²
+		return low;                   //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 	}
 	
 	private double getRightRate(Map<String, UserBeanListAndVal> map) {
-		//2.ÓÃ³¬±ß¿âL¶ÔÑµÁ·Ñù±¾½øĞĞ·ÖÀà
-		//¶Ô·ÖÊıÍ³¼ÆµÄmap
+		//2.ï¿½Ã³ï¿½ï¿½ß¿ï¿½Lï¿½ï¿½Ñµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ·ï¿½ï¿½ï¿½
+		//ï¿½Ô·ï¿½ï¿½ï¿½Í³ï¿½Æµï¿½map
 		int rightNum = 0;
 		for(String itemId : map.keySet()) {
 			UserBeanListAndVal userBeanListAndVal = map.get(itemId);
 			Integer val = userBeanListAndVal.getVal();
 			List<UserBean> userBeanList = userBeanListAndVal.getUserBeanList();
 			Map<Integer, Integer> scoreCountMap = new HashMap<>();
-			//±éÀúÃ¿Ò»Ìõ³¬±ß
+			//ï¿½ï¿½ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			for(Hyperedge hyperedge : hyperedgeList) {
-				//Èç¹ûÊÇÑµÁ·Ñù±¾×Ô¼ºÉú³ÉµÄ³¬±ß£¬Ö±½ÓºöÂÔ
+				//ï¿½ï¿½ï¿½ï¿½ï¿½Ñµï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ÉµÄ³ï¿½ï¿½ß£ï¿½Ö±ï¿½Óºï¿½ï¿½ï¿½
 				if(itemId.equals(hyperedge.getItemId()))
 					continue;
-				//ÊÇ·ñÆ¥Åä
+				//ï¿½Ç·ï¿½Æ¥ï¿½ï¿½
 				List<UserBean> hyperedgeContent = hyperedge.getContent();
 				if(matching(hyperedgeContent,userBeanList)) {
 					Integer score = hyperedge.getVal();
@@ -199,7 +198,7 @@ public class Hypernetworks {
 					}
 					else 
 						scoreCountMap.put(score, 1);
-					//¼ÆËãÊÊÓ¦Öµ
+					//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Öµ
 					if(score == val) 
 						hyperedge.setrCount(hyperedge.getrCount() + 1);
 					else
@@ -221,14 +220,12 @@ public class Hypernetworks {
 				
 		}
 		double rightRate = rightNum * 1.0/map.size();
-//		System.out.println("ÕıÈ·ÊıÎª==============="+rightNum);
-//		System.out.println("ÕıÈ·ÂÊ============"+rightRate);
 		return rightRate;
 	}
 
-	//³õÊ¼»¯³¬±ß¿â
+	//åˆå§‹åŒ–è¶…è¾¹åº“
 	private List<Hyperedge> initHyperdgeList() {
-		//1.³õÊ¼»¯³¬±ß¿â,Ã¿¸öÑù±¾²úÉú100Ìõ³¬±ß
+		//1.ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ß¿ï¿½,Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½100ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		hyperedgeList = new ArrayList<>();
 		for(String itemId : trainMap.keySet()) {
 			UserBeanListAndVal userBeanListAndVal = trainMap.get(itemId);
@@ -251,7 +248,7 @@ public class Hypernetworks {
 		return hyperedgeList;
 	}
 	
-	//Æ¥Åä
+	//åŒ¹é…
 	private boolean matching(List<UserBean> hyperedgeContent,List<UserBean> trainList) {
 		for(UserBean hyperedgeBean : hyperedgeContent) {
 			boolean thisHyperedgeMatching = false;

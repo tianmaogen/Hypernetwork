@@ -1,41 +1,93 @@
 package com;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import com.io.MyFileUtil;
 import com.model.ItemBean;
 import com.model.UserBean;
 import com.model.UserBeanListAndVal;
 
 public class MovieForecast {
+	
 	private static final String sourcePath = "src//main//resources//u.data";
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) throws InterruptedException, ExecutionException {
+		long startTime = System.currentTimeMillis();
+		MyFileUtil.writeOneLine("开始时间为==========="+new Date());
+		ApplicationContext ctx =  new ClassPathXmlApplicationContext("applicationContext.xml");
+		ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor)ctx.getBean("threadPoolTaskExecutor");
 		List<String> userIdList = findSuitUserIdList();
 		
-		for(String userId : userIdList) {
-			Map<String, UserBeanListAndVal> map = getUserMap(userId);
-			MyFileUtils.printToFile("############################################");
-			MyFileUtils.printToFile("��ʼԤ��userIdΪ====="+userId+"��׼ȷ�ʣ�");
-			Map<String, Map<String, UserBeanListAndVal>> testAndTrainMap = getTestAndTrainMap(map);
-			Map<String, UserBeanListAndVal> trainMap = testAndTrainMap.get("trainMap");
-			Map<String, UserBeanListAndVal> testMap = testAndTrainMap.get("testMap");
+		List<Future<Double>> futures = new ArrayList<>();
+		 
+		for(final String userId : userIdList) {
+			Future<Double> future = executor.submit(new Callable<Double>() {
+				@Override
+				public Double call() {
+					List<String> printStrs = new ArrayList<>();
+					Map<String, UserBeanListAndVal> map = getUserMap(userId);
+					printStrs.add("############################################");
+					printStrs.add("开始预测userId为====="+userId+"的准确率!");
+					Map<String, Map<String, UserBeanListAndVal>> testAndTrainMap = getTestAndTrainMap(map);
+					Map<String, UserBeanListAndVal> trainMap = testAndTrainMap.get("trainMap");
+					Map<String, UserBeanListAndVal> testMap = testAndTrainMap.get("testMap");
+					
+					printStrs.add("trainMapSize====="+trainMap.size());
+					printStrs.add("testMapSize======"+testMap.size());
+					
+					Hypernetworks hypernetworks = new Hypernetworks(trainMap, testMap);
+					double trainAccuracy = hypernetworks.train();
+					printStrs.add("训练集的准确率为================="+trainAccuracy);
+					double testAccuracy = hypernetworks.test();
+					printStrs.add("测试集的准确率为================="+testAccuracy);
+					printStrs.add("############################################");
+					MyFileUtil.writeLines(printStrs);
+					
+					return testAccuracy;
+				}
+			});
 			
-			MyFileUtils.printToFile("trainMapSize====="+trainMap.size());
-			MyFileUtils.printToFile("testMapSize======"+testMap.size());
-			
-			Hypernetworks hypernetworks = new Hypernetworks(trainMap, testMap);
-			double trainRate = hypernetworks.train();
-			MyFileUtils.printToFile("ѵ������׼ȷ��Ϊ================="+trainRate);
-			double testRate = hypernetworks.test();
-			MyFileUtils.printToFile("���Լ���׼ȷ��Ϊ================="+testRate);
-			MyFileUtils.printToFile("############################################");
+			futures.add(future);
 		}
-
+		int count1=0,count2=0,count3=0,count4=0,count5=0;
+		double totalAccuracy = 0.0;
+        for (Future<Double> future : futures) {
+        	Double testAccuracy = future.get();
+            if(testAccuracy < 0.2)
+            	count1++;
+            else if(testAccuracy < 0.4)
+            	count2++;
+            else if(testAccuracy < 0.6)
+            	count3++;
+            else if(testAccuracy < 0.8)
+            	count4++;
+            else
+            	count5++;
+            
+            totalAccuracy += testAccuracy;
+        }
+        int size = userIdList.size();
+        double avgAccuracy = totalAccuracy / size ;
+        long endTime = System.currentTimeMillis();
+        MyFileUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        MyFileUtil.writeOneLine("总的预测准确率平均为:" + avgAccuracy);
+        MyFileUtil.writeOneLine("		<0.2		0.2~0.4		0.4~0.6		0.6~0.8		0.8~1.0");
+        MyFileUtil.writeOneLine("		"+count1+"		"+count2+"		"+count3+"		"+count4+"		"+count5);
+        MyFileUtil.writeOneLine("结束时间为==========="+new Date());
+        MyFileUtil.writeOneLine("总耗时为 " + (endTime-startTime)/(1000*60) + " 分钟");
 	}
+
 	
 	public static Map<String,Map<String, UserBeanListAndVal>> getTestAndTrainMap(Map<String, UserBeanListAndVal> map) {
 		Map<String,Map<String, UserBeanListAndVal>> returnMap = new HashMap<>();
@@ -83,13 +135,13 @@ public class MovieForecast {
 		List<String> userIdList = new ArrayList<>();
 		
 		Map<String, List<ItemBean>> map = MyFileUtils.getItemMap(sourcePath);
-		MyFileUtils.printToFile("���������ܴ�СΪ==========="+map.size());
+		MyFileUtil.writeOneLine("测试数据总大小为==========="+map.size());
 		for (String userId : map.keySet()) {
 //			System.out.println("userId=====" + userId + "size============" 	+ map.get(userId).size());
-			if(map.get(userId).size() > 100)
+			if(map.get(userId).size() > 200)
 				userIdList.add(userId);
 		}
-		MyFileUtils.printToFile("ҪԤ���user��СΪ==========="+userIdList.size());
+		MyFileUtil.writeOneLine("要预测的user大小为==========="+userIdList.size());
 		return userIdList;
 	}
 	

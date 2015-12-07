@@ -10,18 +10,21 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.plaf.synth.SynthButtonUI;
+
 import org.apache.commons.io.FileUtils;
 
 public class MyFileUtil {
 
+	private final static String filePath = "src//main//resources//ä»‹æ•°ä¸º5æ¯ä¸ªæ ·æœ¬äº§ç”Ÿ100æ¡è¶…è¾¹.log";
 	/**
-	 * ¸´ÖÆÎÄ¼ş»òÕßÄ¿Â¼,¸´ÖÆÇ°ºóÎÄ¼şÍêÈ«Ò»Ñù¡£
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Â¼,ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½È«Ò»ï¿½ï¿½
 	 * 
 	 * @param resFilePath
-	 *            Ô´ÎÄ¼şÂ·¾¶
+	 *            Ô´ï¿½Ä¼ï¿½Â·ï¿½ï¿½
 	 * @param distFolder
-	 *            Ä¿±êÎÄ¼ş¼Ğ
-	 * @IOException µ±²Ù×÷·¢ÉúÒì³£Ê±Å×³ö
+	 *            Ä¿ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½
+	 * @IOException ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì³£Ê±ï¿½×³ï¿½
 	 */
 	public static void copyFile(String resFilePath, String distFolder)
 			throws IOException {
@@ -29,18 +32,18 @@ public class MyFileUtil {
 		File distFile = new File(distFolder);
 		if (resFile.isDirectory()) { // Ä¿Â¼Ê±
 			FileUtils.copyDirectoryToDirectory(resFile, distFile);
-		} else if (resFile.isFile()) { // ÎÄ¼şÊ±
+		} else if (resFile.isFile()) { // ï¿½Ä¼ï¿½Ê±
 			// FileUtils.copyFileToDirectory(resFile, distFile, true);
 			FileUtils.copyFileToDirectory(resFile, distFile);
 		}
 	}
 
 	/**
-	 * É¾³ıÒ»¸öÎÄ¼ş»òÕßÄ¿Â¼
+	 * É¾ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Â¼
 	 * 
 	 * @param targetPath
-	 *            ÎÄ¼ş»òÕßÄ¿Â¼Â·¾¶
-	 * @IOException µ±²Ù×÷·¢ÉúÒì³£Ê±Å×³ö
+	 *            ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Â¼Â·ï¿½ï¿½
+	 * @IOException ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì³£Ê±ï¿½×³ï¿½
 	 */
 	public static void deleteFile(String targetPath) throws IOException {
 		File targetFile = new File(targetPath);
@@ -52,13 +55,13 @@ public class MyFileUtil {
 	}
 
 	/**
-	 * ½«×Ö·û´®Ğ´ÈëÖ¸¶¨ÎÄ¼ş(µ±Ö¸¶¨µÄ¸¸Â·¾¶ÖĞÎÄ¼ş¼Ğ²»´æÔÚÊ±£¬»á×î´óÏŞ¶ÈÈ¥´´½¨£¬ÒÔ±£Ö¤±£´æ³É¹¦£¡)
+	 * ï¿½ï¿½ï¿½Ö·ï¿½Ğ´ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä¼ï¿½(ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä¸ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ğ²ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ş¶ï¿½È¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½Ö¤ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½)
 	 * 
 	 * @param res
-	 *            Ô­×Ö·û´®
+	 *            Ô­ï¿½Ö·ï¿½
 	 * @param filePath
-	 *            ÎÄ¼şÂ·¾¶
-	 * @return ³É¹¦±ê¼Ç
+	 *            ï¿½Ä¼ï¿½Â·ï¿½ï¿½
+	 * @return ï¿½É¹ï¿½ï¿½ï¿½ï¿½
 	 * @throws IOException
 	 */
 	public static boolean string2File(String res, String filePath)
@@ -68,12 +71,12 @@ public class MyFileUtil {
 		BufferedWriter bufferedWriter = null;
 		try {
 			File distFile = new File(filePath);
-			if (!distFile.getParentFile().exists()) {// ²»´æÔÚÊ±´´½¨
+			if (!distFile.getParentFile().exists()) {// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
 				distFile.getParentFile().mkdirs();
 			}
 			bufferedReader = new BufferedReader(new StringReader(res));
 			bufferedWriter = new BufferedWriter(new FileWriter(distFile));
-			char buf[] = new char[1024]; // ×Ö·û»º³åÇø
+			char buf[] = new char[1024]; // ï¿½Ö·ï¿½ï¿½ï¿½ï¿½
 			int len;
 			while ((len = bufferedReader.read(buf)) != -1) {
 				bufferedWriter.write(buf, 0, len);
@@ -89,13 +92,13 @@ public class MyFileUtil {
 	}
 
 	/**
-	 * È¡µÃÖ¸¶¨ÎÄ¼şÄÚÈİ
+	 * È¡ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @param res
-	 *            Ô­×Ö·û´®
+	 *            Ô­ï¿½Ö·ï¿½
 	 * @param filePath
-	 *            ÎÄ¼şÂ·¾¶
-	 * @return ³É¹¦±ê¼Ç
+	 *            ï¿½Ä¼ï¿½Â·ï¿½ï¿½
+	 * @return ï¿½É¹ï¿½ï¿½ï¿½ï¿½
 	 * @throws IOException
 	 */
 	public static List<String> getContentFromFile(String filePath) throws IOException {
@@ -113,7 +116,7 @@ public class MyFileUtil {
 	}
 
 	/**
-	 * ¸øÖ¸¶¨ÎÄ¼ş×·¼ÓÄÚÈİ
+	 * ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä¼ï¿½×·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @param filePath
 	 * @param contents
@@ -127,24 +130,24 @@ public class MyFileUtil {
 		}
 	}
 	/**
-	 * ÍùÖ¸¶¨µÄÎÄ¼ş×îºóÌí¼ÓÒ»ĞĞ¼ÇÂ¼
-	 * @param filePath ÎÄ¼şÂ·¾¶
-	 * @param content ÄÚÈİ
+	 * ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Ğ¼ï¿½Â¼
+	 * @param filePath ï¿½Ä¼ï¿½Â·ï¿½ï¿½
+	 * @param content ï¿½ï¿½ï¿½ï¿½
 	 */
-	public static void writeOneLine(String filePath,String content) {
+	public synchronized static void writeOneLine(String content) {
 		List<String> lines = new ArrayList<String>();
 		lines.add(content);
-		writeLines(filePath, lines);
+		writeLines(lines);
 	}
 	
 	/**
-	 * ÍùÖ¸¶¨µÄÎÄ¼ş×îºóÌí¼Ó¶àĞĞ¼ÇÂ¼
-	 * @param filePath ÎÄ¼şÂ·¾¶
-	 * @param lines ÄÚÈİ
+	 * ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½Ğ¼ï¿½Â¼
+	 * @param filePath ï¿½Ä¼ï¿½Â·ï¿½ï¿½
+	 * @param lines ï¿½ï¿½ï¿½ï¿½
 	 */
-	public static void writeLines(String filePath,List<String> lines) {
+	public synchronized static void writeLines(List<String> lines) {
 		File distFile = new File(filePath);
-		// ²»´æÔÚÊ±´´½¨
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
 		if (!distFile.getParentFile().exists()) {
 			distFile.getParentFile().mkdirs();
 		}
@@ -156,6 +159,6 @@ public class MyFileUtil {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		writeOneLine("src//main//resources//11.log", "¼Ó¼Ó¼Ó!");
+		writeOneLine("å¤§ä¼šä¸Šç”µè¯!");
 	}
 }
