@@ -1,4 +1,4 @@
-package com.model;
+package com.v1.model;
 
 /**
  * 超网络模型统计类

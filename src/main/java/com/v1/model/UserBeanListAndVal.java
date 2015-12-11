@@ -1,4 +1,4 @@
-package com.model;
+package com.v1.model;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ public class UserBeanListAndVal {
 	
 	public UserBeanListAndVal(Integer val, List<UserBean> userBeanList) {
 		super();
-		//½«1,2===1  3===2  4,5====3
+		//ï¿½ï¿½1,2===1  3===2  4,5====3
 //		if(val == 1 || val == 2)
 //			this.val = 1;
 //		else if(val == 3)

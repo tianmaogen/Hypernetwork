@@ -1,4 +1,4 @@
-package com;
+package com.v1;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,11 +9,45 @@ import java.util.Random;
 import java.util.Set;
 
 import com.io.MyFileUtil;
-import com.model.Hyperedge;
-import com.model.UserBean;
-import com.model.UserBeanListAndVal;
-
-public class Hypernetworks {
+import com.v1.forecast.UserMovieForecast;
+import com.v1.model.Hyperedge;
+import com.v1.model.UserBean;
+import com.v1.model.UserBeanListAndVal;
+/**
+ * 
+ * 超边库结构使用List<Hyperedge> hyperedgeList
+ * 缺点在进行准确率计算getRightRate时太过耗时
+ * 
+ * getRightRate耗时：2989毫秒
+迭代第0次-replaceHyperedge-所用时间耗时：44毫秒
+迭代第0次-getRightRate-所用时间耗时：2890毫秒
+迭代第1次-replaceHyperedge-所用时间耗时：5毫秒
+迭代第1次-getRightRate-所用时间耗时：2845毫秒
+迭代第2次-replaceHyperedge-所用时间耗时：4毫秒
+迭代第2次-getRightRate-所用时间耗时：2821毫秒
+迭代第3次-replaceHyperedge-所用时间耗时：3毫秒
+迭代第3次-getRightRate-所用时间耗时：2798毫秒
+迭代第4次-replaceHyperedge-所用时间耗时：3毫秒
+迭代第4次-getRightRate-所用时间耗时：2824毫秒
+迭代第5次-replaceHyperedge-所用时间耗时：4毫秒
+迭代第5次-getRightRate-所用时间耗时：2857毫秒
+迭代第6次-replaceHyperedge-所用时间耗时：4毫秒
+迭代第6次-getRightRate-所用时间耗时：2822毫秒
+迭代第7次-replaceHyperedge-所用时间耗时：3毫秒
+迭代第7次-getRightRate-所用时间耗时：2830毫秒
+迭代第8次-replaceHyperedge-所用时间耗时：4毫秒
+迭代第8次-getRightRate-所用时间耗时：2898毫秒
+迭代第9次-replaceHyperedge-所用时间耗时：3毫秒
+迭代第9次-getRightRate-所用时间耗时：2889毫秒
+迭代第10次-replaceHyperedge-所用时间耗时：4毫秒
+迭代第10次-getRightRate-所用时间耗时：2913毫秒
+迭代第11次-replaceHyperedge-所用时间耗时：4毫秒
+迭代第11次-getRightRate-所用时间耗时：2912毫秒
+迭代第12次-replaceHyperedge-所用时间耗时：3毫秒
+ * @author my
+ *
+ */
+public class HypernetworksV1 {
 	private int maxIterationCount=400;
 	private Map<String, UserBeanListAndVal> trainMap;
 	private Map<String, UserBeanListAndVal> testMap;
@@ -26,20 +60,20 @@ public class Hypernetworks {
 	//超边集合
 	private List<Hyperedge> hyperedgeList;
 	
-	public Hypernetworks(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap) {
+	public HypernetworksV1(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap) {
 		super();
 		this.trainMap = trainMap;
 		this.testMap = testMap;
 	}
 	
-	public Hypernetworks(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order) {
+	public HypernetworksV1(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order) {
 		super();
 		this.trainMap = trainMap;
 		this.testMap = testMap;
 		this.order = order;
 	}
 	
-	public Hypernetworks(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order, int hyperedgeCount) {
+	public HypernetworksV1(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order, int hyperedgeCount) {
 		super();
 		this.trainMap = trainMap;
 		this.testMap = testMap;
@@ -48,15 +82,28 @@ public class Hypernetworks {
 	}
 
 	public double train() {
+		long startTime = System.currentTimeMillis();
 		initHyperdgeList();
+		long endTime = System.currentTimeMillis();
+		UserMovieForecast.printTime(startTime, endTime, "initHyperdgeList");
+		
+		startTime = System.currentTimeMillis();
 		double rightRate = getRightRate(trainMap);
+		endTime = System.currentTimeMillis();
+		UserMovieForecast.printTime(startTime, endTime, "getRightRate");
 		
 		int iterationCount = maxIterationCount;
 		while(rightRate < 0.95 && iterationCount > 0) {
+			startTime = System.currentTimeMillis();
 			//替换超边
 			replaceHyperedge(hyperedgeList);
-			rightRate = getRightRate(trainMap);
+			endTime = System.currentTimeMillis();
+			UserMovieForecast.printTime(startTime, endTime, "迭代第"+(maxIterationCount-iterationCount)+"次-replaceHyperedge-所用时间");
 			
+			startTime = System.currentTimeMillis();
+			rightRate = getRightRate(trainMap);
+			endTime = System.currentTimeMillis();
+			UserMovieForecast.printTime(startTime, endTime, "迭代第"+(maxIterationCount-iterationCount)+"次-getRightRate-所用时间");
 			iterationCount--;
 		}
 		MyFileUtil.writeOneLine("迭代了"+(maxIterationCount-iterationCount)+"次");
@@ -203,9 +250,7 @@ public class Hypernetworks {
 	}
 	
 	private double getRightRate(Map<String, UserBeanListAndVal> map) {
-		
 		int rightNum = 0;
-		
 		for(String itemId : map.keySet()) {
 			UserBeanListAndVal userBeanListAndVal = map.get(itemId);
 			Integer val = userBeanListAndVal.getVal();
@@ -240,8 +285,7 @@ public class Hypernetworks {
 				}
 			}
 			if(maxScore == val) 
-				rightNum++;
-				
+				rightNum++;				
 		}
 		double rightRate = rightNum * 1.0/map.size();
 		return rightRate;
@@ -292,7 +336,6 @@ public class Hypernetworks {
 
 	//初始化超边库
 	private List<Hyperedge> initHyperdgeList() {
-		//1.��ʼ�����߿�,ÿ�������100������
 		hyperedgeList = new ArrayList<>();
 		for(String itemId : trainMap.keySet()) {
 			UserBeanListAndVal userBeanListAndVal = trainMap.get(itemId);

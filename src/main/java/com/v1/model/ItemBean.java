@@ -1,19 +1,19 @@
-package com.model;
+package com.v1.model;
 
-public class UserBean {
-	private String userId;
+public class ItemBean {
+	private String itemId;
 	private int score;
 	
-	public UserBean(String userId, int score) {
+	public ItemBean(String itemId, int score) {
 		super();
-		this.userId = userId;
+		this.itemId = itemId;
 		this.score = score;
 	}
 	public String getUserId() {
-		return userId;
+		return itemId;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUserId(String itemId) {
+		this.itemId = itemId;
 	}
 	public int getScore() {
 		return score;
@@ -26,7 +26,7 @@ public class UserBean {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + score;
-		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		result = prime * result + ((itemId == null) ? 0 : itemId.hashCode());
 		return result;
 	}
 	@Override
@@ -37,21 +37,15 @@ public class UserBean {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		UserBean other = (UserBean) obj;
+		ItemBean other = (ItemBean) obj;
 		if (score != other.score)
 			return false;
-		if (userId == null) {
-			if (other.userId != null)
+		if (itemId == null) {
+			if (other.itemId != null)
 				return false;
-		} else if (!userId.equals(other.userId))
+		} else if (!itemId.equals(other.itemId))
 			return false;
 		return true;
-	}
-	
-	public static void main(String[] args) {
-		UserBean u1 = new UserBean("1",1);
-		UserBean u2 = new UserBean("1",1);
-		System.out.println(u1.equals(u2));
 	}
 	
 }

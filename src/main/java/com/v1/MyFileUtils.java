@@ -1,4 +1,4 @@
-package com;
+package com.v1;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -10,15 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.model.ItemBean;
-import com.model.UserBean;
+import com.v1.model.ItemBean;
+import com.v1.model.UserBean;
 
 public class MyFileUtils {
 	
 	/**
-	 * ��ȡ map<itemId,��item���ڵ�userList>
-	 * @param filePath �ļ�·��
-	 * @return
+	 * @param filePath 文件路径
+	 * @return  map<itemId,该item对应的userList集合>
 	 */
 	public static Map<String, List<UserBean>> getUserMap(String filePath) {
 		
@@ -26,7 +25,7 @@ public class MyFileUtils {
 		
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
-		BufferedReader br = null; // ���ڰ�װInputStreamReader,��ߴ������ܡ���ΪBufferedReader�л���ģ���InputStreamReaderû�С�
+		BufferedReader br = null; 
 		try {
 			String str = "";
 			fis = new FileInputStream(filePath);// FileInputStream
@@ -59,7 +58,6 @@ public class MyFileUtils {
 				br.close();
 				isr.close();
 				fis.close();
-				// �رյ�ʱ����ð����Ⱥ�˳��ر���󿪵��ȹر������ȹ�s,�ٹ�n,����m
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

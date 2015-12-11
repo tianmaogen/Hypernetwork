@@ -1,4 +1,4 @@
-package com;
+package com.v1.forecast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,9 +15,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.io.MyFileUtil;
-import com.model.ItemBean;
-import com.model.UserBean;
-import com.model.UserBeanListAndVal;
+import com.v1.HypernetworksV1;
+import com.v1.MyFileUtils;
+import com.v1.model.ItemBean;
+import com.v1.model.UserBean;
+import com.v1.model.UserBeanListAndVal;
 
 public class MovieForecast {
 	
@@ -48,7 +50,7 @@ public class MovieForecast {
 					printStrs.add("trainMapSize====="+trainMap.size());
 					printStrs.add("testMapSize======"+testMap.size());
 					
-					Hypernetworks hypernetworks = new Hypernetworks(trainMap, testMap);
+					HypernetworksV1 hypernetworks = new HypernetworksV1(trainMap, testMap);
 					double trainAccuracy = hypernetworks.train();
 					printStrs.add("训练集的准确率为================="+trainAccuracy);
 					double testAccuracy = hypernetworks.test();
