@@ -16,7 +16,7 @@ import org.apache.commons.io.FileUtils;
 
 public class MyFileUtil {
 
-	private final static String filePath = "src//main//resources//介数为5每个样本产生100条超边.log";
+	public static String filePath = "src//main//resources//介数为5每个样本产生100条超边.log";
 	/**
 	 * �����ļ�����Ŀ¼,����ǰ���ļ���ȫһ��
 	 * 
@@ -140,14 +140,8 @@ public class MyFileUtil {
 		writeLines(lines);
 	}
 	
-	/**
-	 * ��ָ�����ļ������Ӷ��м�¼
-	 * @param filePath �ļ�·��
-	 * @param lines ����
-	 */
-	public synchronized static void writeLines(List<String> lines) {
-		File distFile = new File(filePath);
-		// ������ʱ����
+	public synchronized static void writeLines(String theFilePath, List<String> lines) {
+		File distFile = new File(theFilePath);
 		if (!distFile.getParentFile().exists()) {
 			distFile.getParentFile().mkdirs();
 		}
@@ -156,6 +150,10 @@ public class MyFileUtil {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public synchronized static void writeLines(List<String> lines) {
+		writeLines(filePath, lines);
 	}
 	
 	public static void main(String[] args) throws IOException {

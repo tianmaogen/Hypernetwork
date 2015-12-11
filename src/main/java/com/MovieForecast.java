@@ -24,17 +24,19 @@ public class MovieForecast {
 	private static final String sourcePath = "src//main//resources//u.data";
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		long startTime = System.currentTimeMillis();
+		MyFileUtil.filePath = "src//main//resources//介数为4每个样本产生100条超边-12-9.log";
 		MyFileUtil.writeOneLine("开始时间为==========="+new Date());
 		ApplicationContext ctx =  new ClassPathXmlApplicationContext("applicationContext.xml");
 		ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor)ctx.getBean("threadPoolTaskExecutor");
+		
 		List<String> userIdList = findSuitUserIdList();
 		
-		List<Future<Double>> futures = new ArrayList<>();
+		List<Future<Map<String,Double>>> futures = new ArrayList<>();
 		 
 		for(final String userId : userIdList) {
-			Future<Double> future = executor.submit(new Callable<Double>() {
+			Future<Map<String,Double>> future = executor.submit(new Callable<Map<String,Double>>() {
 				@Override
-				public Double call() {
+				public Map<String,Double> call() {
 					List<String> printStrs = new ArrayList<>();
 					Map<String, UserBeanListAndVal> map = getUserMap(userId);
 					printStrs.add("############################################");
@@ -51,10 +53,14 @@ public class MovieForecast {
 					printStrs.add("训练集的准确率为================="+trainAccuracy);
 					double testAccuracy = hypernetworks.test();
 					printStrs.add("测试集的准确率为================="+testAccuracy);
+					double testRMSE = hypernetworks.getRMSE();
+					printStrs.add("测试集的均方根误差为=================" + testRMSE);
 					printStrs.add("############################################");
 					MyFileUtil.writeLines(printStrs);
-					
-					return testAccuracy;
+					Map<String,Double> returnMap = new HashMap<>();
+					returnMap.put("testAccuracy", testAccuracy);
+					returnMap.put("testRMSE", testRMSE);
+					return returnMap;
 				}
 			});
 			
@@ -62,8 +68,11 @@ public class MovieForecast {
 		}
 		int count1=0,count2=0,count3=0,count4=0,count5=0;
 		double totalAccuracy = 0.0;
-        for (Future<Double> future : futures) {
-        	Double testAccuracy = future.get();
+		double totalRMSE = 0.0;
+        for (Future<Map<String,Double>> future : futures) {
+        	Map<String,Double> map = future.get();
+        	Double testAccuracy = map.get("testAccuracy");
+        	Double testRMSE = map.get("testRMSE");
             if(testAccuracy < 0.2)
             	count1++;
             else if(testAccuracy < 0.4)
@@ -76,14 +85,18 @@ public class MovieForecast {
             	count5++;
             
             totalAccuracy += testAccuracy;
+            
+            totalRMSE += testRMSE;
         }
         int size = userIdList.size();
         double avgAccuracy = totalAccuracy / size ;
+        double avgRMSE = totalRMSE / size ;
         long endTime = System.currentTimeMillis();
         MyFileUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         MyFileUtil.writeOneLine("总的预测准确率平均为:" + avgAccuracy);
         MyFileUtil.writeOneLine("		<0.2		0.2~0.4		0.4~0.6		0.6~0.8		0.8~1.0");
         MyFileUtil.writeOneLine("		"+count1+"		"+count2+"		"+count3+"		"+count4+"		"+count5);
+        MyFileUtil.writeOneLine("总的均方根误差平均为:" + avgRMSE);
         MyFileUtil.writeOneLine("结束时间为==========="+new Date());
         MyFileUtil.writeOneLine("总耗时为 " + (endTime-startTime)/(1000*60) + " 分钟");
 	}

@@ -8,17 +8,18 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import com.io.MyFileUtil;
 import com.model.Hyperedge;
 import com.model.UserBean;
 import com.model.UserBeanListAndVal;
 
 public class Hypernetworks {
-	private int maxIterationCount=150;
+	private int maxIterationCount=400;
 	private Map<String, UserBeanListAndVal> trainMap;
 	private Map<String, UserBeanListAndVal> testMap;
 //	private String userId;
 	//超边的介数
-	private int order=5;
+	private int order=4;
 	private int hyperedgeCount=100;
 	private Random random = new Random();
 //	private double weight = 0.5;
@@ -30,40 +31,68 @@ public class Hypernetworks {
 		this.trainMap = trainMap;
 		this.testMap = testMap;
 	}
+	
+	public Hypernetworks(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order) {
+		super();
+		this.trainMap = trainMap;
+		this.testMap = testMap;
+		this.order = order;
+	}
+	
+	public Hypernetworks(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order, int hyperedgeCount) {
+		super();
+		this.trainMap = trainMap;
+		this.testMap = testMap;
+		this.order = order;
+		this.hyperedgeCount = hyperedgeCount;
+	}
 
 	public double train() {
 		initHyperdgeList();
 		double rightRate = getRightRate(trainMap);
 		
 		int iterationCount = maxIterationCount;
-		while(rightRate < 0.9 && iterationCount > 0) {
+		while(rightRate < 0.95 && iterationCount > 0) {
 			//替换超边
 			replaceHyperedge(hyperedgeList);
 			rightRate = getRightRate(trainMap);
 			
 			iterationCount--;
 		}
-		
+		MyFileUtil.writeOneLine("迭代了"+(maxIterationCount-iterationCount)+"次");
 		return rightRate;
 	}
 	
 	public double test() {
 		return getRightRate(testMap);
 	}
+	
+	public double getRMSE() {
+		return getRMSE(testMap);
+	}
  
 	private void replaceHyperedge(List<Hyperedge> hyperedgeList) {
-		
+		//随机选取的item可以产生的超边数量
+		int maxRandomCount = (int) (this.hyperedgeCount * 0.6);
+		int randomCount = 0;
+		String itemId = null;
 		for(int i=0; i<hyperedgeList.size(); i++) {
 			Hyperedge hyperedge = hyperedgeList.get(i);
-			if(hyperedge.getrCount() - hyperedge.getwCount() <= 1) {
-				//随机取一个item
-				String itemId = getRandomItemId();
+			if(hyperedge.getrCount() - hyperedge.getwCount() < 2) {
+				//随机取一个item,该item可以产生maxRandomCount条超边
+				if(randomCount > 0)
+					randomCount--;
+				else {
+					itemId = getRandomItemId();
+					randomCount = maxRandomCount;
+				}
+					
 				UserBeanListAndVal userBeanListAndVal = trainMap.get(itemId);
 				hyperedge.setItemId(itemId);
 				hyperedge.setVal(userBeanListAndVal.getVal());
 				List<UserBean> content  = new ArrayList<>();
 				for(int o = 0; o < order; o++) {
-					Integer index = random.nextInt((userBeanListAndVal.getUserBeanList().size()-1));
+					int index = random.nextInt(userBeanListAndVal.getUserBeanList().size());
 					UserBean userBean = userBeanListAndVal.getUserBeanList().get(index);
 					content.add(userBean);
 				}
@@ -174,20 +203,17 @@ public class Hypernetworks {
 	}
 	
 	private double getRightRate(Map<String, UserBeanListAndVal> map) {
-		//2.�ó��߿�L��ѵ������з���
-		//�Է���ͳ�Ƶ�map
+		
 		int rightNum = 0;
+		
 		for(String itemId : map.keySet()) {
 			UserBeanListAndVal userBeanListAndVal = map.get(itemId);
 			Integer val = userBeanListAndVal.getVal();
 			List<UserBean> userBeanList = userBeanListAndVal.getUserBeanList();
 			Map<Integer, Integer> scoreCountMap = new HashMap<>();
-			//����ÿһ������
 			for(Hyperedge hyperedge : hyperedgeList) {
-				//�����ѵ�����Լ���ɵĳ��ߣ�ֱ�Ӻ���
 				if(itemId.equals(hyperedge.getItemId()))
 					continue;
-				//�Ƿ�ƥ��
 				List<UserBean> hyperedgeContent = hyperedge.getContent();
 				if(matching(hyperedgeContent,userBeanList)) {
 					Integer score = hyperedge.getVal();
@@ -198,7 +224,6 @@ public class Hypernetworks {
 					}
 					else 
 						scoreCountMap.put(score, 1);
-					//������Ӧֵ
 					if(score == val) 
 						hyperedge.setrCount(hyperedge.getrCount() + 1);
 					else
@@ -206,7 +231,6 @@ public class Hypernetworks {
 				}
 			}
 			
-//			System.out.println(scoreCountMap + "trainVal=====" + val);
 			int maxScoreNum = 0;
 			int maxScore = -1;
 			for(int scoreKey : scoreCountMap.keySet()) {
@@ -221,6 +245,49 @@ public class Hypernetworks {
 		}
 		double rightRate = rightNum * 1.0/map.size();
 		return rightRate;
+	}
+	
+	private double getRMSE(Map<String, UserBeanListAndVal> map) {
+		
+		int rightVal = 0;
+		
+		for(String itemId : map.keySet()) {
+			UserBeanListAndVal userBeanListAndVal = map.get(itemId);
+			Integer val = userBeanListAndVal.getVal();
+			List<UserBean> userBeanList = userBeanListAndVal.getUserBeanList();
+			Map<Integer, Integer> scoreCountMap = new HashMap<>();
+			for(Hyperedge hyperedge : hyperedgeList) {
+				if(itemId.equals(hyperedge.getItemId()))
+					continue;
+				List<UserBean> hyperedgeContent = hyperedge.getContent();
+				if(matching(hyperedgeContent,userBeanList)) {
+					Integer score = hyperedge.getVal();
+					if(scoreCountMap.containsKey(score)) {
+						Integer count = scoreCountMap.get(score);
+						count++;
+						scoreCountMap.put(score, count);
+					}
+					else 
+						scoreCountMap.put(score, 1);
+					if(score == val) 
+						hyperedge.setrCount(hyperedge.getrCount() + 1);
+					else
+						hyperedge.setwCount(hyperedge.getwCount() + 1);
+				}
+			}
+			
+			int maxScoreNum = 0;
+			int maxScore = -1;
+			for(int scoreKey : scoreCountMap.keySet()) {
+				if(scoreCountMap.get(scoreKey) > maxScoreNum) {
+					maxScore = scoreKey;
+					maxScoreNum = scoreCountMap.get(scoreKey);
+				}
+			}
+			rightVal += (maxScore-val)*(maxScore-val);
+		}
+		double rightRate = rightVal * 1.0/map.size();
+		return Math.sqrt(rightRate);
 	}
 
 	//初始化超边库
