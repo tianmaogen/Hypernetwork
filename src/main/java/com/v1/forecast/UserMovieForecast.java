@@ -15,7 +15,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.io.MyFileUtil;
-import com.v1.HypernetworksV1;
+import com.v1.Hypernetworks;
 import com.v1.MyFileUtils;
 import com.v1.model.ItemBean;
 import com.v1.model.UserBean;
@@ -82,7 +82,7 @@ public class UserMovieForecast {
 			MyFileUtil.writeOneLine("trainMapSize=====" + trainMap.size());
 			MyFileUtil.writeOneLine("testMapSize======" + testMap.size());
 
-			HypernetworksV1 hypernetworks = new HypernetworksV1(trainMap, testMap,order, hyperedgeCount);
+			Hypernetworks hypernetworks = new Hypernetworks(trainMap, testMap,order, hyperedgeCount);
 			
 			startTime1 = System.currentTimeMillis();
 			double trainAccuracy = hypernetworks.train();

@@ -47,7 +47,7 @@ import com.v1.model.UserBeanListAndVal;
  * @author my
  *
  */
-public class HypernetworksV1 {
+public class Hypernetworks {
 	private int maxIterationCount=400;
 	private Map<String, UserBeanListAndVal> trainMap;
 	private Map<String, UserBeanListAndVal> testMap;
@@ -60,20 +60,20 @@ public class HypernetworksV1 {
 	//超边集合
 	private List<Hyperedge> hyperedgeList;
 	
-	public HypernetworksV1(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap) {
+	public Hypernetworks(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap) {
 		super();
 		this.trainMap = trainMap;
 		this.testMap = testMap;
 	}
 	
-	public HypernetworksV1(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order) {
+	public Hypernetworks(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order) {
 		super();
 		this.trainMap = trainMap;
 		this.testMap = testMap;
 		this.order = order;
 	}
 	
-	public HypernetworksV1(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order, int hyperedgeCount) {
+	public Hypernetworks(Map<String, UserBeanListAndVal> trainMap, Map<String, UserBeanListAndVal> testMap, int order, int hyperedgeCount) {
 		super();
 		this.trainMap = trainMap;
 		this.testMap = testMap;

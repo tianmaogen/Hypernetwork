@@ -15,7 +15,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.io.MyFileUtil;
-import com.v1.HypernetworksV1;
+import com.v1.Hypernetworks;
 import com.v1.MyFileUtils;
 import com.v1.model.ItemBean;
 import com.v1.model.UserBean;
@@ -50,7 +50,7 @@ public class MovieForecast {
 					printStrs.add("trainMapSize====="+trainMap.size());
 					printStrs.add("testMapSize======"+testMap.size());
 					
-					HypernetworksV1 hypernetworks = new HypernetworksV1(trainMap, testMap);
+					Hypernetworks hypernetworks = new Hypernetworks(trainMap, testMap);
 					double trainAccuracy = hypernetworks.train();
 					printStrs.add("训练集的准确率为================="+trainAccuracy);
 					double testAccuracy = hypernetworks.test();
