@@ -1,6 +1,6 @@
 package com.v1.model;
 
-public class UserBean {
+public class UserBean implements Comparable<UserBean>{
 	private String userId;
 	private int score;
 	
@@ -52,6 +52,23 @@ public class UserBean {
 		UserBean u1 = new UserBean("1",1);
 		UserBean u2 = new UserBean("1",1);
 		System.out.println(u1.equals(u2));
+	}
+	@Override
+	public int compareTo(UserBean o) {
+		int oi = Integer.parseInt(o.getUserId());
+		int ti = Integer.parseInt(this.getUserId());
+		
+		if(oi > ti)
+			return -1;
+		else if(oi < ti)
+			return 1;
+		else
+			return 0;
+	}
+	
+	@Override
+	public String toString() {
+		return userId + "-" + score;
 	}
 	
 }

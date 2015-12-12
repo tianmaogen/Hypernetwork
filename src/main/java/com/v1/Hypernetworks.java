@@ -254,13 +254,13 @@ public class Hypernetworks {
 		for(String itemId : map.keySet()) {
 			UserBeanListAndVal userBeanListAndVal = map.get(itemId);
 			Integer val = userBeanListAndVal.getVal();
-			List<UserBean> userBeanList = userBeanListAndVal.getUserBeanList();
+			List<UserBean> targetList = userBeanListAndVal.getUserBeanList();
 			Map<Integer, Integer> scoreCountMap = new HashMap<>();
 			for(Hyperedge hyperedge : hyperedgeList) {
 				if(itemId.equals(hyperedge.getItemId()))
 					continue;
 				List<UserBean> hyperedgeContent = hyperedge.getContent();
-				if(matching(hyperedgeContent,userBeanList)) {
+				if(matching(hyperedgeContent,targetList)) {
 					Integer score = hyperedge.getVal();
 					if(scoreCountMap.containsKey(score)) {
 						Integer count = scoreCountMap.get(score);
@@ -359,10 +359,10 @@ public class Hypernetworks {
 	}
 	
 	//匹配
-	private boolean matching(List<UserBean> hyperedgeContent,List<UserBean> trainList) {
+	private boolean matching(List<UserBean> hyperedgeContent,List<UserBean> targetList) {
 		for(UserBean hyperedgeBean : hyperedgeContent) {
 			boolean thisHyperedgeMatching = false;
-			for(UserBean trainBean : trainList) {
+			for(UserBean trainBean : targetList) {
 				if(trainBean.equals(hyperedgeBean)) {
 					thisHyperedgeMatching = true;
 					break;
