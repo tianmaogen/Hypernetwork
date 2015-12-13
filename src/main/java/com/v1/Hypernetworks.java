@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import com.io.MyFileUtil;
+import com.io.FilePrintUtil;
 import com.v1.forecast.UserMovieForecast;
 import com.v1.model.Hyperedge;
 import com.v1.model.UserBean;
@@ -106,7 +106,7 @@ public class Hypernetworks {
 			UserMovieForecast.printTime(startTime, endTime, "迭代第"+(maxIterationCount-iterationCount)+"次-getRightRate-所用时间");
 			iterationCount--;
 		}
-		MyFileUtil.writeOneLine("迭代了"+(maxIterationCount-iterationCount)+"次");
+		FilePrintUtil.writeOneLine("迭代了"+(maxIterationCount-iterationCount)+"次");
 		return rightRate;
 	}
 	

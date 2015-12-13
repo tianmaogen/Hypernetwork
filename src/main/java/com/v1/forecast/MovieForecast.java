@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.io.MyFileUtil;
+import com.io.FilePrintUtil;
 import com.v1.Hypernetworks;
 import com.v1.MyFileUtils;
 import com.v1.model.ItemBean;
@@ -26,8 +26,8 @@ public class MovieForecast {
 	private static final String sourcePath = "src//main//resources//u.data";
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		long startTime = System.currentTimeMillis();
-		MyFileUtil.filePath = "src//main//resources//介数为4每个样本产生100条超边-12-9.log";
-		MyFileUtil.writeOneLine("开始时间为==========="+new Date());
+		FilePrintUtil.filePath = "src//main//resources//介数为4每个样本产生100条超边-12-9.log";
+		FilePrintUtil.writeOneLine("开始时间为==========="+new Date());
 		ApplicationContext ctx =  new ClassPathXmlApplicationContext("applicationContext.xml");
 		ThreadPoolTaskExecutor executor = (ThreadPoolTaskExecutor)ctx.getBean("threadPoolTaskExecutor");
 		
@@ -58,7 +58,7 @@ public class MovieForecast {
 					double testRMSE = hypernetworks.getRMSE();
 					printStrs.add("测试集的均方根误差为=================" + testRMSE);
 					printStrs.add("############################################");
-					MyFileUtil.writeLines(printStrs);
+					FilePrintUtil.writeLines(printStrs);
 					Map<String,Double> returnMap = new HashMap<>();
 					returnMap.put("testAccuracy", testAccuracy);
 					returnMap.put("testRMSE", testRMSE);
@@ -94,13 +94,13 @@ public class MovieForecast {
         double avgAccuracy = totalAccuracy / size ;
         double avgRMSE = totalRMSE / size ;
         long endTime = System.currentTimeMillis();
-        MyFileUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        MyFileUtil.writeOneLine("总的预测准确率平均为:" + avgAccuracy);
-        MyFileUtil.writeOneLine("		<0.2		0.2~0.4		0.4~0.6		0.6~0.8		0.8~1.0");
-        MyFileUtil.writeOneLine("		"+count1+"		"+count2+"		"+count3+"		"+count4+"		"+count5);
-        MyFileUtil.writeOneLine("总的均方根误差平均为:" + avgRMSE);
-        MyFileUtil.writeOneLine("结束时间为==========="+new Date());
-        MyFileUtil.writeOneLine("总耗时为 " + (endTime-startTime)/(1000*60) + " 分钟");
+        FilePrintUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        FilePrintUtil.writeOneLine("总的预测准确率平均为:" + avgAccuracy);
+        FilePrintUtil.writeOneLine("		<0.2		0.2~0.4		0.4~0.6		0.6~0.8		0.8~1.0");
+        FilePrintUtil.writeOneLine("		"+count1+"		"+count2+"		"+count3+"		"+count4+"		"+count5);
+        FilePrintUtil.writeOneLine("总的均方根误差平均为:" + avgRMSE);
+        FilePrintUtil.writeOneLine("结束时间为==========="+new Date());
+        FilePrintUtil.writeOneLine("总耗时为 " + (endTime-startTime)/(1000*60) + " 分钟");
 	}
 
 	
@@ -150,13 +150,13 @@ public class MovieForecast {
 		List<String> userIdList = new ArrayList<>();
 		
 		Map<String, List<ItemBean>> map = MyFileUtils.getItemMap(sourcePath);
-		MyFileUtil.writeOneLine("测试数据总大小为==========="+map.size());
+		FilePrintUtil.writeOneLine("测试数据总大小为==========="+map.size());
 		for (String userId : map.keySet()) {
 //			System.out.println("userId=====" + userId + "size============" 	+ map.get(userId).size());
 			if(map.get(userId).size() > 200)
 				userIdList.add(userId);
 		}
-		MyFileUtil.writeOneLine("要预测的user大小为==========="+userIdList.size());
+		FilePrintUtil.writeOneLine("要预测的user大小为==========="+userIdList.size());
 		return userIdList;
 	}
 	

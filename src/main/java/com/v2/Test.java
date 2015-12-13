@@ -90,8 +90,7 @@ public class Test {
         end = System.currentTimeMillis();
         System.out.println("3 layer is " + (end - start) + "ms");
         
-        Random random = new Random();
-        random.nextInt(0);
+        System.out.println(Math.sqrt((3.8877827251032206 * 3.8877827251032206 * 653)/20000));
 	}
 
 }

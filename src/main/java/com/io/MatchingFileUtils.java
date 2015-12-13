@@ -1,4 +1,4 @@
-package com.v1;
+package com.io;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -7,13 +7,15 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.v1.model.ItemBean;
 import com.v1.model.UserBean;
 
-public class MyFileUtils {
+public class MatchingFileUtils {
 	
 	/**
 	 * @param filePath 文件路径
@@ -29,6 +31,7 @@ public class MyFileUtils {
 		try {
 			String str = "";
 			fis = new FileInputStream(filePath);// FileInputStream
+			// ���ļ�ϵͳ�е�ĳ���ļ��л�ȡ�ֽ�
 			isr = new InputStreamReader(fis);
 			br = new BufferedReader(isr);
 			while ((str = br.readLine()) != null) {
@@ -49,9 +52,9 @@ public class MyFileUtils {
 			}
 //			System.out.println("newMapSize==============="+newMap.keySet().size());
 		} catch (FileNotFoundException e) {
-			System.out.println("找不到文件!");
+			System.out.println("�Ҳ���ָ���ļ�");
 		} catch (IOException e) {
-			System.out.println("文件读写异常!");
+			System.out.println("��ȡ�ļ�ʧ��");
 		} finally {
 			try {
 				br.close();
@@ -69,34 +72,24 @@ public class MyFileUtils {
 		System.out.println(str);
 	}
 	/**
-	 * ��ȡ map<userId,���û����ڵ�itemList>
-	 * @param filePath �ļ�·��
+	 * 获取测试集中要预测的userId List
+	 * @param testFilePath 测试集合的文件路径
 	 * @return
 	 */
-	public static Map<String, List<ItemBean>> getItemMap(String filePath) {
-		Map<String, List<ItemBean>> map = new HashMap<>();
+	public static Set<String> getTestUserIdList(String testFilePath) {
+		Set<String> set = new HashSet<>();
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
-		BufferedReader br = null; // ���ڰ�װInputStreamReader,��ߴ������ܡ���ΪBufferedReader�л���ģ���InputStreamReaderû�С�
+		BufferedReader br = null; 
 		try {
 			String str = "";
-			fis = new FileInputStream(filePath);// FileInputStream
-			isr = new InputStreamReader(fis);// InputStreamReader ���ֽ���ͨ���ַ���������,
+			fis = new FileInputStream(testFilePath);// FileInputStream
+			isr = new InputStreamReader(fis);// InputStreamReader
 			br = new BufferedReader(isr);
 			while ((str = br.readLine()) != null) {
 				String[] strs = str.split("	");
 				String userId = strs[0];
-				String itemId = strs[1];
-				Integer score = Integer.parseInt(strs[2]);
-				ItemBean itemBean = new ItemBean(itemId, score);
-				if (map.containsKey(userId)) {
-					List<ItemBean> userBeanList = map.get(userId);
-					userBeanList.add(itemBean);
-				} else {
-					List<ItemBean> userBeanList = new ArrayList<>();
-					userBeanList.add(itemBean);
-					map.put(userId, userBeanList);
-				}
+				set.add(userId);
 			}
 
 		} catch (FileNotFoundException e) {
@@ -108,12 +101,11 @@ public class MyFileUtils {
 				br.close();
 				isr.close();
 				fis.close();
-				// �رյ�ʱ����ð����Ⱥ�˳��ر���󿪵��ȹر������ȹ�s,�ٹ�n,����m
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 
-		return map;
+		return set;
 	}
 }

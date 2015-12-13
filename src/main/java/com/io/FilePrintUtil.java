@@ -10,11 +10,13 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.synth.SynthButtonUI;
-
 import org.apache.commons.io.FileUtils;
 
-public class MyFileUtil {
+/**
+ * 工具类：将文件输出到路径为filePath的文件中
+ *
+ */
+public class FilePrintUtil {
 
 	public static String filePath = "src//main//resources//介数为5每个样本产生100条超边.log";
 	/**

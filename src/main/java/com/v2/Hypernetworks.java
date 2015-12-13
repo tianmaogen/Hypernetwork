@@ -13,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import com.io.MyFileUtil;
+import com.io.FilePrintUtil;
 import com.v1.forecast.UserMovieForecast;
 /**
  * 
@@ -85,7 +85,7 @@ public class Hypernetworks {
 //			UserMovieForecast.printTime(startTime, endTime, "迭代第"+(maxIterationCount-iterationCount)+"次-getRightRate-所用时间");
 			iterationCount--;
 		}
-		MyFileUtil.writeOneLine("迭代了"+(maxIterationCount-iterationCount)+"次");
+		FilePrintUtil.writeOneLine("迭代了"+(maxIterationCount-iterationCount)+"次");
 		return rightRate;
 	}
 	
@@ -264,7 +264,8 @@ public class Hypernetworks {
 
 	private double getRMSE(Map<String, UserBeanSet> map) {
 		
-		int rightVal = 0;
+		//分子
+		int numerator = 0;
 		
 		for(String itemId : map.keySet()) {
 			UserBeanSet userBeanListAndVal = map.get(itemId);
@@ -298,10 +299,9 @@ public class Hypernetworks {
 					maxScoreNum = scoreCountMap.get(scoreKey);
 				}
 			}
-			rightVal += (maxScore-val)*(maxScore-val);
+			numerator += (maxScore-val)*(maxScore-val);
 		}
-		double rightRate = rightVal * 1.0/map.size();
-		return Math.sqrt(rightRate);
+		return numerator;
 	}
 
 	//初始化超边库

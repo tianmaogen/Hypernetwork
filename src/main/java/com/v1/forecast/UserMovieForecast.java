@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.io.MyFileUtil;
+import com.io.FilePrintUtil;
 import com.v1.Hypernetworks;
 import com.v1.MyFileUtils;
 import com.v1.model.ItemBean;
@@ -34,9 +34,9 @@ public class UserMovieForecast {
 		long startTime = System.currentTimeMillis();
 		int order = 4;
 		int hyperedgeCount = 100;
-		MyFileUtil.filePath = "src//main//resources//介数为"+order+"每个样本产生"+hyperedgeCount+"条超边-12-11.log";
+		FilePrintUtil.filePath = "src//main//resources//介数为"+order+"每个样本产生"+hyperedgeCount+"条超边-12-11.log";
 		
-		MyFileUtil.writeOneLine("开始时间为===========" + new Date());
+		FilePrintUtil.writeOneLine("开始时间为===========" + new Date());
 		List<String> userIdList = new ArrayList<>();
 		userIdList.add("533");
 //		userIdList.add("660");
@@ -70,8 +70,8 @@ public class UserMovieForecast {
 			long endTime1 = System.currentTimeMillis();
 			printTime(startTime1, endTime1, "getUserMap");
 			
-			MyFileUtil.writeOneLine("############################################");
-			MyFileUtil.writeOneLine("开始预测userId为=====" + userId + "的准确率!");
+			FilePrintUtil.writeOneLine("############################################");
+			FilePrintUtil.writeOneLine("开始预测userId为=====" + userId + "的准确率!");
 			startTime1 = System.currentTimeMillis();
 			Map<String, Map<String, UserBeanListAndVal>> testAndTrainMap = getTestAndTrainMap(map);
 			Map<String, UserBeanListAndVal> trainMap = testAndTrainMap.get("trainMap");
@@ -79,8 +79,8 @@ public class UserMovieForecast {
 			endTime1 = System.currentTimeMillis();
 			printTime(startTime1, endTime1, "getTestAndTrainMap");
 
-			MyFileUtil.writeOneLine("trainMapSize=====" + trainMap.size());
-			MyFileUtil.writeOneLine("testMapSize======" + testMap.size());
+			FilePrintUtil.writeOneLine("trainMapSize=====" + trainMap.size());
+			FilePrintUtil.writeOneLine("testMapSize======" + testMap.size());
 
 			Hypernetworks hypernetworks = new Hypernetworks(trainMap, testMap,order, hyperedgeCount);
 			
@@ -89,14 +89,14 @@ public class UserMovieForecast {
 			endTime1 = System.currentTimeMillis();
 			printTime(startTime1, endTime1, "train");
 			
-			MyFileUtil.writeOneLine("训练集的准确率为=================" + trainAccuracy);
+			FilePrintUtil.writeOneLine("训练集的准确率为=================" + trainAccuracy);
 			
 			startTime1 = System.currentTimeMillis();
 			double testAccuracy = hypernetworks.test();
 			endTime1 = System.currentTimeMillis();
 			printTime(startTime1, endTime1, "test");
 			
-			MyFileUtil.writeOneLine("测试集的准确率为=================" + testAccuracy);
+			FilePrintUtil.writeOneLine("测试集的准确率为=================" + testAccuracy);
 			totalAccuracy += testAccuracy;
 			startTime1 = System.currentTimeMillis();
 			double testRMSE = hypernetworks.getRMSE();
@@ -104,8 +104,8 @@ public class UserMovieForecast {
 			printTime(startTime1, endTime1, "getRMSE");
 			
 			totalRMSE += testRMSE;
-			MyFileUtil.writeOneLine("测试集的均方根误差为=================" + testRMSE);
-			MyFileUtil.writeOneLine("############################################");
+			FilePrintUtil.writeOneLine("测试集的均方根误差为=================" + testRMSE);
+			FilePrintUtil.writeOneLine("############################################");
 //			MyFileUtil.writeLines(printStrs);
 		}
 		
@@ -113,11 +113,11 @@ public class UserMovieForecast {
 		double avgAccuracy = totalAccuracy / size;
 		double avgTestRMSE = totalRMSE / size;
 		long endTime = System.currentTimeMillis();
-		MyFileUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-		MyFileUtil.writeOneLine("总的准确率平均为:"+avgAccuracy);
-		MyFileUtil.writeOneLine("总的均方根误差平均为:"+avgTestRMSE);
-		MyFileUtil.writeOneLine("结束时间为==========="+new Date());
-		MyFileUtil.writeOneLine("总耗时为 "+(endTime-startTime)/(1000*60)+" 分钟");
+		FilePrintUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		FilePrintUtil.writeOneLine("总的准确率平均为:"+avgAccuracy);
+		FilePrintUtil.writeOneLine("总的均方根误差平均为:"+avgTestRMSE);
+		FilePrintUtil.writeOneLine("结束时间为==========="+new Date());
+		FilePrintUtil.writeOneLine("总耗时为 "+(endTime-startTime)/(1000*60)+" 分钟");
 
 	}
 
@@ -168,13 +168,13 @@ public class UserMovieForecast {
 		List<String> userIdList = new ArrayList<>();
 		
 		Map<String, List<ItemBean>> map = MyFileUtils.getItemMap(sourcePath);
-		MyFileUtil.writeOneLine("测试数据总大小为==========="+map.size());
+		FilePrintUtil.writeOneLine("测试数据总大小为==========="+map.size());
 		for (String userId : map.keySet()) {
 //			System.out.println("userId=====" + userId + "size============" 	+ map.get(userId).size());
 			if(map.get(userId).size() > 200)
 				userIdList.add(userId);
 		}
-		MyFileUtil.writeOneLine("要预测的user大小为==========="+userIdList.size());
+		FilePrintUtil.writeOneLine("要预测的user大小为==========="+userIdList.size());
 		return userIdList;
 	}
 

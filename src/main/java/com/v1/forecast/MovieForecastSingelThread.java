@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import com.io.MyFileUtil;
+import com.io.FilePrintUtil;
 import com.v1.Hypernetworks;
 import com.v1.MyFileUtils;
 import com.v1.model.ItemBean;
@@ -27,7 +27,7 @@ public class MovieForecastSingelThread {
 	public static void main(String[] args)
 			throws InterruptedException, ExecutionException {
 		long startTime = System.currentTimeMillis();
-		MyFileUtil.writeOneLine("开始时间为===========" + new Date());
+		FilePrintUtil.writeOneLine("开始时间为===========" + new Date());
 		List<String> userIdList = findSuitUserIdList();
 
 		for (String userId : userIdList) {
@@ -48,7 +48,7 @@ public class MovieForecastSingelThread {
 			double testAccuracy = hypernetworks.test();
 			printStrs.add("测试集的准确率为=================" + testAccuracy);
 			printStrs.add("############################################");
-			MyFileUtil.writeLines(printStrs);
+			FilePrintUtil.writeLines(printStrs);
 
 		}
 		
@@ -56,10 +56,10 @@ public class MovieForecastSingelThread {
 		int size = userIdList.size();
 		double avgAccuracy = totalAccuracy / size;
 		long endTime = System.currentTimeMillis();
-		MyFileUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-		MyFileUtil.writeOneLine("总的预测准确率平均为:"+avgAccuracy);
-		MyFileUtil.writeOneLine("结束时间为==========="+new Date());
-		MyFileUtil.writeOneLine("总耗时为 "+(endTime-startTime)/(1000*60)+" 分钟");
+		FilePrintUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+		FilePrintUtil.writeOneLine("总的预测准确率平均为:"+avgAccuracy);
+		FilePrintUtil.writeOneLine("结束时间为==========="+new Date());
+		FilePrintUtil.writeOneLine("总耗时为 "+(endTime-startTime)/(1000*60)+" 分钟");
 
 	}
 
@@ -110,14 +110,14 @@ public class MovieForecastSingelThread {
 		List<String> userIdList = new ArrayList<>();
 
 		Map<String, List<ItemBean>> map = MyFileUtils.getItemMap(sourcePath);
-		MyFileUtil.writeOneLine("测试数据总大小为===========" + map.size());
+		FilePrintUtil.writeOneLine("测试数据总大小为===========" + map.size());
 		for (String userId : map.keySet()) {
 			// System.out.println("userId=====" + userId + "size============" +
 			// map.get(userId).size());
 			if (map.get(userId).size() > 300)
 				userIdList.add(userId);
 		}
-		MyFileUtil.writeOneLine("要预测的user大小为===========" + userIdList.size());
+		FilePrintUtil.writeOneLine("要预测的user大小为===========" + userIdList.size());
 		return userIdList;
 	}
 
