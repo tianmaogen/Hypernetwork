@@ -9,19 +9,26 @@ import java.util.Set;
 
 import com.io.FilePrintUtil;
 import com.io.MatchingFileUtils;
-import com.v1.MyFileUtils;
 import com.v1.model.UserBean;
 import com.v2.Hypernetworks;
 import com.v2.UserBeanSet;
 
 public class Match {
-	private static final String trainSourceFile = "src//main//resources//u2.base";
-	private static final String testSourceFile = "src//main//resources//u2.test";
+	private String trainSourceFile = "src//main//resources//u2.base";
+	private String testSourceFile = "src//main//resources//u2.test";
+	private int order = 4;
+	//测试样集中用户对电影的评分数-数量
+	private int testSamplesize = 20000;
+	//所有用户对电影的平均评分
+	private double avgScore = 3.5299;
+	//未通过超网络模型预测的userID集合
+	private Set<String> excludeUserIds = new HashSet<>();
 	
-	public static void main(String[] args) {
+	public void matching() {
+
 		long startTime = System.currentTimeMillis();
-		int order = 4;
-		FilePrintUtil.filePath = "src//main//resources//介数为"+order+"-12-12-matching.log";
+		
+		FilePrintUtil.filePath = "src//main//resources//介数为" + order + "-12-12-matching.log";
 		
 		FilePrintUtil.writeOneLine("开始时间为===========" + new Date());
 		Set<String> userIdList = MatchingFileUtils.getTestUserIdList(testSourceFile);
@@ -33,8 +40,11 @@ public class Match {
 			FilePrintUtil.writeOneLine("############################################");
 			FilePrintUtil.writeOneLine("开始预测userId为=====" + userId + "的准确率!");
 			
-			Map<String, UserBeanSet> trainMap = getUserMap(userId,trainSourceFile);
-			Map<String, UserBeanSet> testMap = getUserMap(userId,testSourceFile);
+			Map<String, UserBeanSet> trainMap = getItemUserBeanSetMap(userId,trainSourceFile, false);
+			Map<String, UserBeanSet> testMap = getItemUserBeanSetMap(userId,testSourceFile, true);
+			
+			if(testMap.size() == 0)
+				continue;
 			
 			FilePrintUtil.writeOneLine("trainMapSize=====" + trainMap.size());
 			FilePrintUtil.writeOneLine("testMapSize======" + testMap.size());
@@ -51,32 +61,42 @@ public class Match {
 			FilePrintUtil.writeOneLine("############################################");
 		}
 		
-		int size = 20000;
-		double avgAccuracy = totalAccuracy / size;
-		double avgTestRMSE = Math.sqrt(totalNumerator/size);
+		double avgAccuracy = totalAccuracy / userIdList.size();
+		
+		double excludeUserIdsNumerator = MatchingFileUtils.getExcludeUserIdsNumerator(avgScore, excludeUserIds, testSourceFile);
+		totalNumerator += excludeUserIdsNumerator;
+		
+		double avgTestRMSE = Math.sqrt(totalNumerator / testSamplesize);
 		long endTime = System.currentTimeMillis();
 		FilePrintUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		FilePrintUtil.writeOneLine("总的准确率平均为:"+avgAccuracy);
 		FilePrintUtil.writeOneLine("总的均方根误差平均为:"+avgTestRMSE);
+		FilePrintUtil.writeOneLine("测试集未进行超网络预测的均方根误差分子为=================" + excludeUserIdsNumerator);
 		FilePrintUtil.writeOneLine("结束时间为==========="+new Date());
 		FilePrintUtil.writeOneLine("总耗时为 "+(endTime-startTime)/(1000*60)+" 分钟");
-	}
 	
+	}
 	/**
 	 * 获取该user的测试集map或者训练集map
 	 * @param userId 用户id
 	 * @param filePath 测试集或训练集的文件路径
+	 * @param isTest 是否是测试样集在调用
 	 * @return
 	 */
-	public static Map<String, UserBeanSet> getUserMap(String userId, String filePath) {
+	public Map<String, UserBeanSet> getItemUserBeanSetMap(String userId, String filePath, boolean isTest) {
 
 		Map<String, UserBeanSet> newMap = new HashMap<>();
-		Map<String, List<UserBean>> map = MyFileUtils.getUserMap(filePath);
+		Map<String, List<UserBean>> map = MatchingFileUtils.getItemUserListMap(filePath);
 		for (String itemId : map.keySet()) {
 			List<UserBean> userList = map.get(itemId);
 			
-			if(userList.size() < 5)
+			if(userList.size() < 5) {
+				//如果是测试样集，将userId写进excludeUserIds，用于计算最后的误差平方根
+				if(isTest)
+					excludeUserIds.add(userId);
 				continue;
+			}
+				
 			
 			boolean hasUserId = false;
 			Integer val = 0;
@@ -88,16 +108,21 @@ public class Match {
 				}
 			}
 			if (hasUserId) {
-				//Map<String,Integer> userscoreMap
 				HashSet<String> userScoreSet = new HashSet<>();
 				for(UserBean userBean : userList) 
 					userScoreSet.add(userBean.getUserId() + "-" + userBean.getScore());
 				
-				UserBeanSet userBeanMapAndVal = new UserBeanSet(val, userScoreSet);
-				newMap.put(itemId, userBeanMapAndVal);
+				UserBeanSet userBeanSet = new UserBeanSet(val, userScoreSet);
+				newMap.put(itemId, userBeanSet);
 			}
 		}
 
 		return newMap;
 	}
+	
+	public static void main(String[] args) {
+		Match match = new Match();
+		match.matching();
+	}
+	
 }

@@ -33,7 +33,6 @@ public class MyFileUtils {
 			br = new BufferedReader(isr);
 			while ((str = br.readLine()) != null) {
 				String[] strs = str.split("	");
-//				System.out.println("userId===" + strs[0] + "itemId========" + strs[1] + "score=======" + strs[2]);
 				String userId = strs[0];
 				String itemId = strs[1];
 				Integer score = Integer.parseInt(strs[2]);
@@ -47,7 +46,6 @@ public class MyFileUtils {
 					map.put(itemId, userBeanList);
 				}
 			}
-//			System.out.println("newMapSize==============="+newMap.keySet().size());
 		} catch (FileNotFoundException e) {
 			System.out.println("找不到文件!");
 		} catch (IOException e) {

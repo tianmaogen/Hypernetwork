@@ -12,6 +12,10 @@ public class UserBeanSet {
 		this.userScoreSet = userScoreSet;
 	}
 	
+	public UserBeanSet() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Integer getVal() {
 		return val;
 	}

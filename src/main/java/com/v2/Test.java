@@ -1,6 +1,7 @@
 package com.v2;
 
-import java.util.Random;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Test {
 
@@ -91,6 +92,11 @@ public class Test {
         System.out.println("3 layer is " + (end - start) + "ms");
         
         System.out.println(Math.sqrt((3.8877827251032206 * 3.8877827251032206 * 653)/20000));
+        
+        Set<String> set = new HashSet<String>();
+        for(String str : set) {
+        	System.out.println(123);
+        }
 	}
 
 }
