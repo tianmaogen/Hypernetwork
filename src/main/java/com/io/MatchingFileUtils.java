@@ -127,7 +127,8 @@ public class MatchingFileUtils {
 			while ((str = br.readLine()) != null) {
 				String[] strs = str.split("	");
 				String userId = strs[0];
-				if(excludeUserIds.contains(userId)) {
+				String itemId = strs[1];
+				if(excludeUserIds.contains(userId + "-" + itemId)) {
 					Integer score = Integer.parseInt(strs[2]);
 					double numerator = (avgScore - score) * (avgScore - score);
 					excludeUserIdsNumerator += numerator;

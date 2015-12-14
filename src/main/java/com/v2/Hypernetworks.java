@@ -3,7 +3,6 @@ package com.v2;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -14,7 +13,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.io.FilePrintUtil;
-import com.v1.forecast.UserMovieForecast;
 /**
  * 
  */
@@ -24,7 +22,7 @@ public class Hypernetworks {
 	private Map<String, UserBeanSet> testMap;
 //	private String userId;
 	//超边的介数
-	private int order=4;
+	private int order = 4;
 	//总的超边库的数量
 	private int hyperedgeTotalCount=100000;
 	//每一个样本应该产生的超边数
@@ -35,10 +33,19 @@ public class Hypernetworks {
 	private List<Hyperedge> hyperedgeList;
 	
     // 线程数
-    private final int THREAD_NUM = 15;
+    public static final int THREAD_NUM = 15;
     // 初始化线程池
     private ExecutorService es = Executors.newFixedThreadPool(THREAD_NUM);
-	
+	//训练样本迭代的次数
+	private int iterationCount;
+	public int getIterationCount() {
+		return iterationCount;
+	}
+
+	public void setIterationCount(int iterationCount) {
+		this.iterationCount = iterationCount;
+	}
+
 	public Hypernetworks(Map<String, UserBeanSet> trainMap, Map<String, UserBeanSet> testMap) {
 		super();
 		this.trainMap = trainMap;
@@ -71,8 +78,8 @@ public class Hypernetworks {
 //		long endTime = System.currentTimeMillis();
 //		UserMovieForecast.printTime(startTime, endTime, "getRightRate");
 		
-		int iterationCount = maxIterationCount;
-		while(rightRate < 0.95 && iterationCount > 0) {
+		int totalIterationCount = maxIterationCount;
+		while(rightRate < 0.95 && totalIterationCount > 0) {
 //			startTime = System.currentTimeMillis();
 			//替换超边
 			replaceHyperedge();
@@ -83,9 +90,10 @@ public class Hypernetworks {
 			rightRate = getRightRate(trainMap);
 //			endTime = System.currentTimeMillis();
 //			UserMovieForecast.printTime(startTime, endTime, "迭代第"+(maxIterationCount-iterationCount)+"次-getRightRate-所用时间");
-			iterationCount--;
+			totalIterationCount--;
 		}
-		FilePrintUtil.writeOneLine("迭代了"+(maxIterationCount-iterationCount)+"次");
+		//设置迭代次数
+		this.iterationCount = maxIterationCount-totalIterationCount;
 		return rightRate;
 	}
 	
