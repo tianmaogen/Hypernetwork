@@ -93,10 +93,10 @@ public class Test {
         
         System.out.println(Math.sqrt((3.8877827251032206 * 3.8877827251032206 * 653)/20000));
         
-        Set<String> set = new HashSet<String>();
-        for(String str : set) {
-        	System.out.println(123);
-        }
+        double x = (1.330111160768109 * 1.330111160768109 * 20000) -25565.913999997727;
+        System.out.println(x);
+        double result = Math.sqrt((x + 2412.772921150005) / 20000);
+        System.out.println(result);
 	}
 
 }
