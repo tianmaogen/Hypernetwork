@@ -17,6 +17,7 @@ import java.util.List;
 public class DBUtils {
 	private static final int COMMIT_SIZE = 500;
 	public static void main(String[] args) {
+		
 		String sourcePath = "src//main//resources//u.data";
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
