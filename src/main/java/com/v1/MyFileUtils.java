@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +20,7 @@ public class MyFileUtils {
 	 * @param filePath 文件路径
 	 * @return  map<itemId,该item对应的userList集合>
 	 */
-	public static Map<String, List<UserBean>> getUserMap(String filePath) {
+	public static Map<String, List<UserBean>> getItemMap(String filePath) {
 		
 		Map<String,List<UserBean>> map = new HashMap<>();
 		
@@ -67,11 +68,10 @@ public class MyFileUtils {
 		System.out.println(str);
 	}
 	/**
-	 * ��ȡ map<userId,���û����ڵ�itemList>
-	 * @param filePath �ļ�·��
-	 * @return
+	 * @param filePath 文件路径
+	 * @return  map<userId,该user对应的itemList集合>
 	 */
-	public static Map<String, List<ItemBean>> getItemMap(String filePath) {
+	public static Map<String, List<ItemBean>> getUserMap(String filePath) {
 		Map<String, List<ItemBean>> map = new HashMap<>();
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
@@ -98,15 +98,14 @@ public class MyFileUtils {
 			}
 
 		} catch (FileNotFoundException e) {
-			System.out.println("�Ҳ���ָ���ļ�");
+			System.out.println("找不到文件!");
 		} catch (IOException e) {
-			System.out.println("��ȡ�ļ�ʧ��");
+			System.out.println("文件读写异常!");
 		} finally {
 			try {
 				br.close();
 				isr.close();
 				fis.close();
-				// �رյ�ʱ����ð����Ⱥ�˳��ر���󿪵��ȹر������ȹ�s,�ٹ�n,����m
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -1,7 +1,5 @@
 package com.v2;
 
-import java.util.HashSet;
-
 public class Hyperedge {
 	
 	private String itemId;

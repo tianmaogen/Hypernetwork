@@ -140,7 +140,7 @@ public class UserMovieForecast {
 	public static Map<String, UserBeanListAndVal> getUserMap(String userId) {
 
 		Map<String, UserBeanListAndVal> newMap = new HashMap<>();
-		Map<String, List<UserBean>> map = MyFileUtils.getUserMap(sourcePath);
+		Map<String, List<UserBean>> map = MyFileUtils.getItemMap(sourcePath);
 		for (String itemId : map.keySet()) {
 			List<UserBean> userList = map.get(itemId);
 			boolean hasMaxUserId = false;
@@ -167,7 +167,7 @@ public class UserMovieForecast {
 		
 		List<String> userIdList = new ArrayList<>();
 		
-		Map<String, List<ItemBean>> map = MyFileUtils.getItemMap(sourcePath);
+		Map<String, List<ItemBean>> map = MyFileUtils.getUserMap(sourcePath);
 		FilePrintUtil.writeOneLine("测试数据总大小为==========="+map.size());
 		for (String userId : map.keySet()) {
 //			System.out.println("userId=====" + userId + "size============" 	+ map.get(userId).size());

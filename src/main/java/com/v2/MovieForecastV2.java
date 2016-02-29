@@ -29,30 +29,30 @@ public class MovieForecastV2 {
 		FilePrintUtil.filePath = "src//main//resources//介数为"+order+"-12-12-V2-modify.log";
 		
 		FilePrintUtil.writeOneLine("开始时间为===========" + new Date());
-		List<String> userIdList = new ArrayList<>();
-		userIdList.add("533");
-		userIdList.add("660");
-		userIdList.add("932");
-		userIdList.add("49");
-		userIdList.add("280");
-		userIdList.add("653");
-		userIdList.add("18");
-		userIdList.add("535");
-		userIdList.add("87");
-		userIdList.add("339");
-		userIdList.add("643");
-
-		userIdList.add("194");
-		userIdList.add("62");
-		userIdList.add("642");
-		userIdList.add("286");
-		userIdList.add("334");
-		userIdList.add("749");
-		userIdList.add("345");
-		userIdList.add("537");
-		userIdList.add("650");
-		userIdList.add("342");
-//		List<String> userIdList = findSuitUserIdList();
+//		List<String> userIdList = new ArrayList<>();
+//		userIdList.add("533");
+//		userIdList.add("660");
+//		userIdList.add("932");
+//		userIdList.add("49");
+//		userIdList.add("280");
+//		userIdList.add("653");
+//		userIdList.add("18");
+//		userIdList.add("535");
+//		userIdList.add("87");
+//		userIdList.add("339");
+//		userIdList.add("643");
+//
+//		userIdList.add("194");
+//		userIdList.add("62");
+//		userIdList.add("642");
+//		userIdList.add("286");
+//		userIdList.add("334");
+//		userIdList.add("749");
+//		userIdList.add("345");
+//		userIdList.add("537");
+//		userIdList.add("650");
+//		userIdList.add("342");
+		List<String> userIdList = findSuitUserIdList();
 		double totalAccuracy = 0.0;
 		double totalRMSE = 0.0;
 		for (String userId : userIdList) {
@@ -91,7 +91,7 @@ public class MovieForecastV2 {
 			FilePrintUtil.writeOneLine("测试集的准确率为=================" + testAccuracy);
 			totalAccuracy += testAccuracy;
 //			startTime1 = System.currentTimeMillis();
-			double testRMSE = hypernetworks.getRMSE();
+			double testRMSE = hypernetworks.getRMSEnumerator();
 //			endTime1 = System.currentTimeMillis();
 //			printTime(startTime1, endTime1, "getRMSE");
 			
@@ -132,7 +132,7 @@ public class MovieForecastV2 {
 	public static Map<String, UserBeanSet> getUserMap(String userId) {
 
 		Map<String, UserBeanSet> newMap = new HashMap<>();
-		Map<String, List<UserBean>> map = MyFileUtils.getUserMap(sourcePath);
+		Map<String, List<UserBean>> map = MyFileUtils.getItemMap(sourcePath);
 		for (String itemId : map.keySet()) {
 			List<UserBean> userList = map.get(itemId);
 			
@@ -166,7 +166,7 @@ public class MovieForecastV2 {
 		
 		List<String> userIdList = new ArrayList<>();
 		
-		Map<String, List<ItemBean>> map = MyFileUtils.getItemMap(sourcePath);
+		Map<String, List<ItemBean>> map = MyFileUtils.getUserMap(sourcePath);
 		FilePrintUtil.writeOneLine("测试数据总大小为==========="+map.size());
 		for (String userId : map.keySet()) {
 //			System.out.println("userId=====" + userId + "size============" 	+ map.get(userId).size());
