@@ -136,9 +136,13 @@ public class MatchingFileUtils
 	 * @param testFilePath 测试集合的文件路径
 	 * @return
 	 */
-	public static double getExcludeUserIdsNumerator(double avgScore, Set<String> excludeUserIds, String testFilePath)
+	public static Map<String,Double> getExcludeUserIdsNumerator(double avgScore, Set<String> excludeUserIds, String testFilePath)
 	{
-		double excludeUserIdsNumerator = 0.0;
+		Map<String,Double> returnMap = new HashMap<>();
+		
+		double excludeUserIdsRMSENumerator = 0.0;
+		double excludeUserIdsMAENumerator = 0.0;
+		
 		FileInputStream fis = null;
 		InputStreamReader isr = null;
 		BufferedReader br = null;
@@ -156,8 +160,11 @@ public class MatchingFileUtils
 				if (excludeUserIds.contains(userId + "-" + itemId))
 				{
 					Integer score = Integer.parseInt(strs[2]);
-					double numerator = (avgScore - score) * (avgScore - score);
-					excludeUserIdsNumerator += numerator;
+					double numeratorRMSE = (avgScore - score) * (avgScore - score);
+					double numeratorMAE = Math.abs(avgScore - score);
+					
+					excludeUserIdsRMSENumerator += numeratorRMSE;
+					excludeUserIdsMAENumerator += numeratorMAE;
 				}
 			}
 
@@ -179,7 +186,9 @@ public class MatchingFileUtils
 				e.printStackTrace();
 			}
 		}
+		returnMap.put("RMSE", excludeUserIdsRMSENumerator);
+		returnMap.put("MAE", excludeUserIdsMAENumerator);
 
-		return excludeUserIdsNumerator;
+		return returnMap;
 	}
 }

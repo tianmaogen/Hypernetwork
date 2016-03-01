@@ -75,7 +75,7 @@ public class Match
 
 					if (testMap.size() == 0)
 						return null;
-
+					
 					printStrs.add("trainMapSize=====" + trainMap.size());
 					printStrs.add("testMapSize======" + testMap.size());
 
@@ -83,21 +83,26 @@ public class Match
 					double trainAccuracy = hypernetworks.train();
 					printStrs.add("迭代了" + hypernetworks.getIterationCount() + "次");
 					printStrs.add("训练集的准确率为=================" + trainAccuracy);
-					double testAccuracy = hypernetworks.test();
-					printStrs.add("测试集的准确率为=================" + testAccuracy);
-					double numerator = hypernetworks.getRMSEnumerator();
-					printStrs.add("测试集的均方根误差分子为=================" + numerator);
+					hypernetworks.setTestResult();
+					
+					printStrs.add("测试集的准确率为=================" + hypernetworks.getTestRightRate());
+					printStrs.add("测试集的均方根误差分子为=================" + hypernetworks.getrMSEnumerator());
+					printStrs.add("测试集的平均绝对误差分子为=================" + hypernetworks.getmAEnumerator());
 					printStrs.add("############################################");
+					
 					FilePrintUtil.writeLines(printStrs);
 
-					return new UserTestResultBean(trainAccuracy, testAccuracy, numerator);
+					return new UserTestResultBean(trainAccuracy, hypernetworks.getTestRightRate(), 
+							hypernetworks.getrMSEnumerator(), hypernetworks.getmAEnumerator());
 				}
 			});
 			futures.add(future);
 		}
 
 		double totalAccuracy = 0.0;
-		double totalNumerator = 0.0;
+		double totalRMSENumerator = 0.0;
+		double totalMAENumerator = 0.0;
+		
 		for (Future<UserTestResultBean> future : futures)
 		{
 			UserTestResultBean userTestResultBean = null;
@@ -105,7 +110,9 @@ public class Match
 			{
 				userTestResultBean = future.get();
 				totalAccuracy += userTestResultBean.getTestAccuracy();
-				totalNumerator += userTestResultBean.getNumerator();
+				totalRMSENumerator += userTestResultBean.getNumeratorRMSE();
+				totalMAENumerator += userTestResultBean.getNumeratorMAE();
+				
 			} catch (Exception e)
 			{
 				System.out.println(userTestResultBean.getTestAccuracy());
@@ -116,18 +123,22 @@ public class Match
 
 		double avgAccuracy = totalAccuracy / userIdList.size();
 
-		double excludeUserIdsNumerator = MatchingFileUtils.getExcludeUserIdsNumerator(avgScore, excludeUserIds, testSourceFile);
-		totalNumerator += excludeUserIdsNumerator;
+		Map<String, Double> excludeUserNumeratorMap = MatchingFileUtils.getExcludeUserIdsNumerator(avgScore, excludeUserIds, testSourceFile);
+		totalRMSENumerator += excludeUserNumeratorMap.get("RMSE");
+		totalMAENumerator += excludeUserNumeratorMap.get("MAE");
 
-		double avgTestRMSE = Math.sqrt(totalNumerator / testSamplesize);
+		double avgTestRMSE = Math.sqrt(totalRMSENumerator / testSamplesize);
+		double avgTestMAE = totalMAENumerator / testSamplesize;
+		
 		long endTime = System.currentTimeMillis();
+		
 		FilePrintUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-		FilePrintUtil.writeOneLine("开启" + THREAD_NUM + "个线程");
-//		FilePrintUtil.writeOneLine("对每个userId开启" + Hypernetworks.THREAD_NUM + "个线程");
-		FilePrintUtil.writeOneLine("使用平均值预测的集合大小为" + excludeUserIds.size());
 		FilePrintUtil.writeOneLine("总的准确率平均为:" + avgAccuracy);
-		FilePrintUtil.writeOneLine("总的均方根误差平均为:" + avgTestRMSE);
-		FilePrintUtil.writeOneLine("测试集未进行超网络预测的均方根误差分子为=================" + excludeUserIdsNumerator);
+		FilePrintUtil.writeOneLine("总的均方根误差为:" + avgTestRMSE);
+		FilePrintUtil.writeOneLine("总的平均绝对误差为:" + avgTestMAE);
+		FilePrintUtil.writeOneLine("测试集未进行超网络预测的数量为=================" + excludeUserIds.size());
+		FilePrintUtil.writeOneLine("测试集未进行超网络预测的均方根误差分子为=================" + excludeUserNumeratorMap.get("RMSE"));
+		FilePrintUtil.writeOneLine("测试集未进行超网络预测的平均绝对误差分子为=================" + excludeUserNumeratorMap.get("MAE"));
 		FilePrintUtil.writeOneLine("结束时间为===========" + new Date());
 		FilePrintUtil.writeOneLine("总耗时为 " + (endTime - startTime) / (1000 * 60) + " 分钟");
 
@@ -143,7 +154,8 @@ public class Match
 
 		FilePrintUtil.writeOneLine("要预测的user大小为===========" + userIdList.size());
 		double totalAccuracy = 0.0;
-		double totalNumerator = 0.0;
+		double totalRMSENumerator = 0.0;
+		double totalMAENumerator = 0.0;
 		for (String userId : userIdList)
 		{
 			FilePrintUtil.writeOneLine("############################################");
@@ -161,28 +173,38 @@ public class Match
 			Hypernetworks hypernetworks = new Hypernetworks(trainMap, testMap, order);
 			double trainAccuracy = hypernetworks.train();
 			FilePrintUtil.writeOneLine("训练集的准确率为=================" + trainAccuracy);
-			double testAccuracy = hypernetworks.test();
-			FilePrintUtil.writeOneLine("测试集的准确率为=================" + testAccuracy);
-			totalAccuracy += testAccuracy;
-			double numerator = hypernetworks.getRMSEnumerator();
-			totalNumerator += numerator;
-			FilePrintUtil.writeOneLine("测试集的均方根误差分子为=================" + numerator);
+			hypernetworks.setTestResult();
+			
+			FilePrintUtil.writeOneLine("测试集的准确率为=================" + hypernetworks.getTestRightRate());
+			
+			totalAccuracy += hypernetworks.getTestRightRate();
+			totalRMSENumerator += hypernetworks.getrMSEnumerator();
+			totalMAENumerator += hypernetworks.getmAEnumerator();
+			
+			FilePrintUtil.writeOneLine("测试集的均方根误差分子为=================" + hypernetworks.getrMSEnumerator());
+			FilePrintUtil.writeOneLine("测试集的平均绝对误差分子为=================" + hypernetworks.getmAEnumerator());
 			FilePrintUtil.writeOneLine("############################################");
 		}
 
 		double avgAccuracy = totalAccuracy / userIdList.size();
 
-		double excludeUserIdsNumerator = MatchingFileUtils.getExcludeUserIdsNumerator(avgScore, excludeUserIds, testSourceFile);
+		Map<String, Double>  excludeUserNumeratorMap = MatchingFileUtils.getExcludeUserIdsNumerator(avgScore, excludeUserIds, testSourceFile);
 		// System.out.println(excludeUserIds.size());
 		// System.out.println(excludeUserIdsNumerator);
-		totalNumerator += excludeUserIdsNumerator;
+		totalRMSENumerator += excludeUserNumeratorMap.get("RMSE");
+		totalMAENumerator += excludeUserNumeratorMap.get("MAE");
 
-		double avgTestRMSE = Math.sqrt(totalNumerator / testSamplesize);
+		double avgTestRMSE = Math.sqrt(totalRMSENumerator / testSamplesize);
+		double avgTestMAE = totalMAENumerator / testSamplesize;
+		
 		long endTime = System.currentTimeMillis();
 		FilePrintUtil.writeOneLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 		FilePrintUtil.writeOneLine("总的准确率平均为:" + avgAccuracy);
-		FilePrintUtil.writeOneLine("总的均方根误差平均为:" + avgTestRMSE);
-		FilePrintUtil.writeOneLine("测试集未进行超网络预测的均方根误差分子为=================" + excludeUserIdsNumerator);
+		FilePrintUtil.writeOneLine("总的均方根误差为:" + avgTestRMSE);
+		FilePrintUtil.writeOneLine("总的平均绝对误差为:" + avgTestMAE);
+		FilePrintUtil.writeOneLine("测试集未进行超网络预测的数量为=================" + excludeUserIds.size());
+		FilePrintUtil.writeOneLine("测试集未进行超网络预测的均方根误差分子为=================" + excludeUserNumeratorMap.get("RMSE"));
+		FilePrintUtil.writeOneLine("测试集未进行超网络预测的平均绝对误差分子为=================" + excludeUserNumeratorMap.get("MAE"));
 		FilePrintUtil.writeOneLine("结束时间为===========" + new Date());
 		FilePrintUtil.writeOneLine("总耗时为 " + (endTime - startTime) / (1000 * 60) + " 分钟");
 
@@ -247,24 +269,27 @@ public class Match
 
 	public static void main(String[] args)
 	{		
-		for(int i=4;i<8;i++) 
-		{
-			Match match = new Match(i,30000);
-			match.groupMatching();
-		}
 		
-		for(int i=1;i<8;i++) 
-		{
-			Match match = new Match(i,40000);
-			match.groupMatching();
-		}
+		Match match = new Match(3,1000);
+		match.groupMatching();
 		
-		for(int i=1;i<8;i++) 
-		{
-			Match match = new Match(i,50000);
-			match.groupMatching();
-		}
+//		for(int i=5;i<8;i++) 
+//		{
+//			Match match = new Match(i,30000);
+//			match.groupMatching();
+//		}
+//		
+//		//开启4个线程
+//		for(int i=4;i<11;i++) 
+//		{
+//			int hyperedgeTotalCount = i * 10000;
+//			Match match = new Match(4,hyperedgeTotalCount);
+//			match.groupMatching();
+//		}
+		
+		//测试超网络的介数对RMSE的影响
 
+		
 
 		// String testSourceFile = "src//main//resources//u2.test";
 		// 测试样集中用户对电影的评分数-数量

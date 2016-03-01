@@ -38,6 +38,25 @@ public class Hypernetworks
 	private ExecutorService es = Executors.newCachedThreadPool();
 	// 训练样本迭代的次数
 	private int iterationCount;
+	
+	private Integer rMSEnumerator = 0;
+	private Integer mAEnumerator = 0;
+	private Double testRightRate = 0.0;
+	
+	public Integer getrMSEnumerator()
+	{
+		return rMSEnumerator;
+	}
+
+	public Integer getmAEnumerator()
+	{
+		return mAEnumerator;
+	}
+
+	public Double getTestRightRate()
+	{
+		return testRightRate;
+	}
 
 	public int getIterationCount()
 	{
@@ -111,6 +130,63 @@ public class Hypernetworks
 	public double test()
 	{
 		return getRightRateSingel(testMap);
+	}
+	
+	public void setTestResult()
+	{
+		// 分子
+		Integer rMSEnumerator = 0;
+		Integer mAEnumerator = 0;
+		Integer rightNum = 0;
+		
+		for (String itemId : testMap.keySet())
+		{
+			UserBeanSet userBeanListAndVal = testMap.get(itemId);
+			Integer val = userBeanListAndVal.getVal();
+			HashSet<String> userScoreSet = userBeanListAndVal.getUserScoreSet();
+			Map<Integer, Integer> scoreCountMap = new HashMap<>();
+			for (Hyperedge hyperedge : hyperedgeList)
+			{
+				if (itemId.equals(hyperedge.getItemId()))
+					continue;
+				if (matching(hyperedge, userScoreSet))
+				{
+					Integer score = hyperedge.getVal();
+					if (scoreCountMap.containsKey(score))
+					{
+						Integer count = scoreCountMap.get(score);
+						count++;
+						scoreCountMap.put(score, count);
+					} else
+						scoreCountMap.put(score, 1);
+					if (score == val)
+						hyperedge.setrCount(hyperedge.getrCount() + 1);
+					else
+						hyperedge.setwCount(hyperedge.getwCount() + 1);
+				}
+			}
+
+			int maxScoreNum = 0;
+			int maxScore = 3;
+			for (int scoreKey : scoreCountMap.keySet())
+			{
+				if (scoreCountMap.get(scoreKey) > maxScoreNum)
+				{
+					maxScore = scoreKey;
+					maxScoreNum = scoreCountMap.get(scoreKey);
+				}
+			}
+			if (maxScore == val)
+				rightNum++;
+			
+			rMSEnumerator += (maxScore - val) * (maxScore - val);
+			mAEnumerator += Math.abs(maxScore - val);
+		}
+		Double testRightRate = rightNum * 1.0 / testMap.size();
+		
+		this.rMSEnumerator = rMSEnumerator;
+		this.mAEnumerator = mAEnumerator;
+		this.testRightRate = testRightRate;
 	}
 
 	public double getRMSEnumerator()
@@ -312,7 +388,6 @@ public class Hypernetworks
 	//获取RMSE中的分子
 	private double getRMSEnumerator(Map<String, UserBeanSet> map)
 	{
-
 		// 分子
 		int numerator = 0;
 
@@ -344,7 +419,7 @@ public class Hypernetworks
 			}
 
 			int maxScoreNum = 0;
-			int maxScore = 3;
+			int maxScore = 3;//3.5299;
 			for (int scoreKey : scoreCountMap.keySet())
 			{
 				if (scoreCountMap.get(scoreKey) > maxScoreNum)
