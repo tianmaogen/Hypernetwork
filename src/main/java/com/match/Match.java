@@ -35,13 +35,17 @@ public class Match
 	private int THREAD_NUM = 5;
 	// 初始化线程池
 	private ExecutorService es;
+	
+	//总的超边数
+	private int hyperedgeTotalCount;
 
-	public Match(int threadNum)
+	public Match(int threadNum, int hyperedgeTotalCount)
 	{
+		this.hyperedgeTotalCount = hyperedgeTotalCount;
 		this.THREAD_NUM = threadNum;
 		es = Executors.newFixedThreadPool(THREAD_NUM);
 //		es = Executors.newCachedThreadPool();
-		FilePrintUtil.filePath = "src//main//resources//介数为" + order + "-2-29-matching-"+threadNum+"个线程.log";
+		FilePrintUtil.filePath = "src//main//resources//介数为" + order + "-2-29-matching-"+threadNum+"个线程"+hyperedgeTotalCount+"条超边.log";
 	}
 
 	// 多线程模型
@@ -75,7 +79,7 @@ public class Match
 					printStrs.add("trainMapSize=====" + trainMap.size());
 					printStrs.add("testMapSize======" + testMap.size());
 
-					Hypernetworks hypernetworks = new Hypernetworks(trainMap, testMap, order);
+					Hypernetworks hypernetworks = new Hypernetworks(trainMap, testMap, order, hyperedgeTotalCount);
 					double trainAccuracy = hypernetworks.train();
 					printStrs.add("迭代了" + hypernetworks.getIterationCount() + "次");
 					printStrs.add("训练集的准确率为=================" + trainAccuracy);
@@ -242,10 +246,22 @@ public class Match
 	}
 
 	public static void main(String[] args)
-	{
-		for(int i=5;i<6;i++) 
+	{		
+		for(int i=4;i<8;i++) 
 		{
-			Match match = new Match(i);
+			Match match = new Match(i,30000);
+			match.groupMatching();
+		}
+		
+		for(int i=1;i<8;i++) 
+		{
+			Match match = new Match(i,40000);
+			match.groupMatching();
+		}
+		
+		for(int i=1;i<8;i++) 
+		{
+			Match match = new Match(i,50000);
 			match.groupMatching();
 		}
 

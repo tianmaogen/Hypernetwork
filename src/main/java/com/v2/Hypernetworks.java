@@ -24,7 +24,7 @@ public class Hypernetworks
 	// 超边的介数
 	private int order = 4;
 	// 总的超边库的数量
-	private int hyperedgeTotalCount = 10000;
+	private int hyperedgeTotalCount = 40000;
 	// 每一个样本应该产生的超边数
 	private int hyperedgeCount;
 	private Random random = new Random();
@@ -49,6 +49,7 @@ public class Hypernetworks
 		this.iterationCount = iterationCount;
 	}
 
+	
 	public Hypernetworks(Map<String, UserBeanSet> trainMap, Map<String, UserBeanSet> testMap)
 	{
 		super();
