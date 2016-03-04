@@ -216,10 +216,10 @@ public class Match
 //		Match match = new Match(3,1000);
 //		match.groupMatching();
 		
-		for(int i=12;i<16;i++) 
+		for(int i=15;i<16;i++) 
 		{
 			int hyperedgeTotalCount = i * 10000;
-			Match match = new Match(4,hyperedgeTotalCount);
+			Match match = new Match(2,hyperedgeTotalCount);
 			match.groupMatching();
 		}
 		
