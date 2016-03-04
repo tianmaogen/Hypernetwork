@@ -1,6 +1,7 @@
 package com.match;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +50,13 @@ public class Match
 		this.THREAD_NUM = threadNum;
 		es = Executors.newFixedThreadPool(THREAD_NUM);
 //		es = Executors.newCachedThreadPool();
-		FilePrintUtil.filePath = "src//main//resources//介数为" + order + "-2-29-matching-"+threadNum+"个线程"+hyperedgeTotalCount+"条超边.log";
+		StringBuffer monthDay = new StringBuffer("-");
+		Calendar now = Calendar.getInstance();
+		monthDay.append(now.get(Calendar.MONTH) + 1);
+		monthDay.append("-");
+		monthDay.append(now.get(Calendar.DAY_OF_MONTH));
+		monthDay.append("-matching-");
+		FilePrintUtil.filePath = "src//main//resources//介数为" + order + monthDay.toString()+threadNum+"个线程"+hyperedgeTotalCount+"条超边.log";
 	}
 
 	// 多线程模型
@@ -209,8 +216,7 @@ public class Match
 //		Match match = new Match(3,1000);
 //		match.groupMatching();
 		
-		//开启4个线程
-		for(int i=7;i<15;i++) 
+		for(int i=12;i<16;i++) 
 		{
 			int hyperedgeTotalCount = i * 10000;
 			Match match = new Match(4,hyperedgeTotalCount);
