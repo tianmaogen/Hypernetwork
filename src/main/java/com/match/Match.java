@@ -44,10 +44,11 @@ public class Match
 	 * @param threadNum 开启多少个线程
 	 * @param hyperedgeTotalCount 超边库中超边的数量
 	 */
-	public Match(int threadNum, int hyperedgeTotalCount)
+	public Match(int threadNum, int hyperedgeTotalCount, int order)
 	{
 		this.hyperedgeTotalCount = hyperedgeTotalCount;
 		this.THREAD_NUM = threadNum;
+		this.order = order;
 		es = Executors.newFixedThreadPool(THREAD_NUM);
 //		es = Executors.newCachedThreadPool();
 		StringBuffer monthDay = new StringBuffer("-");
@@ -216,14 +217,16 @@ public class Match
 //		Match match = new Match(3,1000);
 //		match.groupMatching();
 		
-		for(int i=15;i<16;i++) 
+		//测试超网络的介数对RMSE的影响，5个线程，10万条超边，测试 介数为3到6的RMSE，MAE
+		for(int i=3;i<8;i++) 
 		{
-			int hyperedgeTotalCount = i * 10000;
-			Match match = new Match(2,hyperedgeTotalCount);
+			if(i==4)
+				continue;
+			Match match = new Match(5,100000,i);
 			match.groupMatching();
 		}
 		
-		//测试超网络的介数对RMSE的影响
+		
 
 		
 
