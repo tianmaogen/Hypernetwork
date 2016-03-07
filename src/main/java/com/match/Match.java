@@ -217,17 +217,25 @@ public class Match
 //		Match match = new Match(3,1000);
 //		match.groupMatching();
 		
-		//测试超网络的介数对RMSE的影响，5个线程，10万条超边，测试 介数为3到6的RMSE，MAE
-		for(int i=3;i<8;i++) 
+		Match match = new Match(5,100000,7);
+		match.groupMatching();
+
+		for(int i=2;i<16;i++) 
 		{
-			if(i==4)
+			int count = 10000 * i;
+			if(count == 100000)
 				continue;
-			Match match = new Match(5,100000,i);
-			match.groupMatching();
+			Match match1 = new Match(5,count,2);
+			match1.groupMatching();
 		}
 		
-		
-
+		for(int i=1;i<9;i++) 
+		{
+			if(i == 5)
+				continue;
+			Match match2 = new Match(i,100000,2);
+			match2.groupMatching();
+		}
 		
 
 		// String testSourceFile = "src//main//resources//u2.test";
