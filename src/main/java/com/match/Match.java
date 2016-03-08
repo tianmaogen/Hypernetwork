@@ -217,23 +217,11 @@ public class Match
 //		Match match = new Match(3,1000);
 //		match.groupMatching();
 		
-		Match match = new Match(5,100000,7);
-		match.groupMatching();
-
-		for(int i=2;i<16;i++) 
-		{
-			int count = 10000 * i;
-			if(count == 100000)
-				continue;
-			Match match1 = new Match(5,count,2);
-			match1.groupMatching();
-		}
-		
-		for(int i=1;i<9;i++) 
+		for(int i=1;i<10;i++) 
 		{
 			if(i == 5)
 				continue;
-			Match match2 = new Match(i,100000,2);
+			Match match2 = new Match(i,50000,2);
 			match2.groupMatching();
 		}
 		
